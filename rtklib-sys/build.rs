@@ -13,11 +13,89 @@ fn main() {
 
     fail_on_empty_directory("rtklib/");
 
-    cc::Build::new()
-    .file("rtklib/src/rtkcmn.c")
-    .file("rtklib/src/rtcm3.c")
-    .warnings(false)
-    .compile("rtklib");
+    let mut build = cc::Build::new();
+
+    // Enable all constellations
+    build.define("ENAGLO", None);
+    build.define("ENAGAL", None);
+    build.define("ENAQZS", None);
+    build.define("ENACMP", None);
+    build.define("ENAIRN", None);
+    build.define("TRACE", None);
+    // Activate the built-in stub implementations of GUI callbacks
+    // (showmsg, settspan, settime) in rtkcmn.c
+    build.define("DLL", None);
+
+    // Core files (always compiled)
+    build.file("rtklib/src/rtkcmn.c");
+    build.file("rtklib/src/trace.c");
+    build.file("rtklib/src/geoid.c");
+    build.file("rtklib/src/datum.c");
+
+    #[cfg(feature = "conv")]
+    {
+        build.file("rtklib/src/convrnx.c");
+        build.file("rtklib/src/convkml.c");
+        build.file("rtklib/src/convgpx.c");
+    }
+
+    #[cfg(feature = "gis")]
+    {
+        build.file("rtklib/src/gis.c");
+    }
+
+    #[cfg(feature = "net")]
+    {
+        build.file("rtklib/src/stream.c");
+        build.file("rtklib/src/rtksvr.c");
+        build.file("rtklib/src/streamsvr.c");
+        build.file("rtklib/src/download.c");
+        println!("cargo:rustc-link-lib=pthread");
+    }
+
+    #[cfg(feature = "ppk")]
+    {
+        build.file("rtklib/src/postpos.c");
+        build.file("rtklib/src/rtkpos.c");
+        build.file("rtklib/src/pntpos.c");
+        build.file("rtklib/src/rinex.c");
+        build.file("rtklib/src/ephemeris.c");
+        build.file("rtklib/src/preceph.c");
+        build.file("rtklib/src/lambda.c");
+        build.file("rtklib/src/solution.c");
+        build.file("rtklib/src/ionex.c");
+        build.file("rtklib/src/sbas.c");
+        build.file("rtklib/src/options.c");
+        build.file("rtklib/src/ppp.c");
+        build.file("rtklib/src/ppp_ar.c");
+        build.file("rtklib/src/tides.c");
+    }
+
+    #[cfg(feature = "raw")]
+    {
+        build.file("rtklib/src/rcvraw.c");
+    }
+
+    // RTCM files are needed by both ppk and rtcm features.
+    // PPK uses them for SSR corrections.
+    #[cfg(any(feature = "ppk", feature = "rtcm"))]
+    {
+        build.file("rtklib/src/rtcm.c");
+        build.file("rtklib/src/rtcm2.c");
+        build.file("rtklib/src/rtcm3.c");
+        build.file("rtklib/src/rtcm3e.c");
+    }
+
+    #[cfg(feature = "tle")]
+    {
+        build.file("rtklib/src/tle.c");
+    }
+
+    #[cfg(unix)]
+    println!("cargo:rustc-link-lib=m");
+
+    build.warnings(false);
+    build.compile("rtklib");
 
     let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
 
@@ -34,7 +112,19 @@ fn main() {
     let bindings = bindgen::Builder::default()
         // The input header we would like to generate
         // bindings for.
-        .header("RTKLIB/src/rtklib.h")
+        .header("rtklib/src/rtklib.h")
+        .clang_arg("-DENAGLO")
+        .clang_arg("-DENAGAL")
+        .clang_arg("-DENAQZS")
+        .clang_arg("-DENACMP")
+        .clang_arg("-DENAIRN")
+        .clang_arg("-DTRACE")
+        // Block constants that get duplicate definitions from math.h
+        .blocklist_item("FP_NAN")
+        .blocklist_item("FP_INFINITE")
+        .blocklist_item("FP_ZERO")
+        .blocklist_item("FP_SUBNORMAL")
+        .blocklist_item("FP_NORMAL")
         // Tell cargo to invalidate the built crate whenever any of the
         // included header files changed.
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
