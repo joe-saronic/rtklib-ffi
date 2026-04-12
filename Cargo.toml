@@ -29,3 +29,6 @@ tle = ["rtklib-sys/tle"]
 bitflags = "2"
 rtklib-sys = { path = "rtklib-sys/", version = "0.1.3" }
 thiserror = "2"
+
+[dev-dependencies]
+serial_test = "3"
