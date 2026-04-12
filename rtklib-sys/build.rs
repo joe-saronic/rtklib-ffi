@@ -1,5 +1,5 @@
-use std::{env, fs};
 use std::path::PathBuf;
+use std::{env, fs};
 
 fn fail_on_empty_directory(name: &str) {
     if fs::read_dir(name).unwrap().count() == 0 {
@@ -10,7 +10,6 @@ fn fail_on_empty_directory(name: &str) {
 }
 
 fn main() {
-
     fail_on_empty_directory("rtklib/");
 
     let mut build = cc::Build::new();
@@ -100,7 +99,7 @@ fn main() {
     let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
 
     // Tell cargo to look for shared libraries in the specified directory
-    println!("cargo:rustc-link-search={}",env::var("OUT_DIR").unwrap());
+    println!("cargo:rustc-link-search={}", env::var("OUT_DIR").unwrap());
 
     // Tell cargo to tell rustc to link the system bzip2
     // shared library.
@@ -134,7 +133,7 @@ fn main() {
         .expect("Unable to generate bindings");
 
     // Write the bindings to the $OUT_DIR/bindings.rs file.
-   
+
     bindings
         .write_to_file(out_path.join("bindings.rs"))
         .expect("Couldn't write bindings!");
@@ -144,5 +143,4 @@ fn main() {
         env::var("CARGO_MANIFEST_DIR").unwrap()
     );
     println!("cargo:out_dir={}", env::var("OUT_DIR").unwrap());
-    
 }

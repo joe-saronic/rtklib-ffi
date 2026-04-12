@@ -1,6 +1,6 @@
-use std::ffi::CString;
-use rtklib_sys::rtklib as ffi;
 use crate::NavSys;
+use rtklib_sys::rtklib as ffi;
+use std::ffi::CString;
 
 /// Positioning mode.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
