@@ -5,9 +5,14 @@ pub mod ppk;
 #[cfg(feature = "ppk")]
 pub use ppk::*;
 
+#[cfg(feature = "rtcm")]
+pub mod rtcm;
+#[cfg(feature = "rtcm")]
+pub use rtcm::*;
+
 bitflags::bitflags! {
     /// GNSS navigation system bitmask.
-    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
     pub struct NavSys: u32 {
         /// Global Positioning System. From SYS_GPS.
         const Gps = ffi::SYS_GPS;
@@ -31,7 +36,7 @@ bitflags::bitflags! {
 }
 
 /// Solution quality status.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(i32)]
 pub enum SolStatus {
     /// No solution available. From SOLQ_NONE.

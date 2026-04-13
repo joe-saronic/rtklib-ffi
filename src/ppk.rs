@@ -3,7 +3,7 @@ use rtklib_sys::rtklib as ffi;
 use std::ffi::CString;
 
 /// Positioning mode.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(i32)]
 pub enum PosMode {
     /// Single point positioning. From PMODE_SINGLE.
@@ -29,7 +29,7 @@ pub enum PosMode {
 }
 
 /// Solution output format.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(i32)]
 pub enum SolFormat {
     /// Latitude, longitude, and height. From SOLF_LLH.
@@ -43,7 +43,7 @@ pub enum SolFormat {
 }
 
 /// Ionosphere correction option.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(i32)]
 pub enum IonoOpt {
     /// Ionosphere correction disabled. From IONOOPT_OFF.
@@ -63,7 +63,7 @@ pub enum IonoOpt {
 }
 
 /// Troposphere correction option.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(i32)]
 pub enum TropOpt {
     /// Troposphere correction disabled. From TROPOPT_OFF.
@@ -79,7 +79,7 @@ pub enum TropOpt {
 }
 
 /// Ambiguity resolution mode.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(i32)]
 pub enum ArMode {
     /// Ambiguity resolution disabled.
