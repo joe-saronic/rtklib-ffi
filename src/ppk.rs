@@ -200,6 +200,31 @@ impl PrcOpt {
         self.0.ionoopt
     }
 
+    /// Set base station position in ECEF coordinates (meters).
+    ///
+    /// Equivalent to the `-r` flag in `rnx2rtkp`.
+    pub fn set_base_position_ecef(&mut self, x: f64, y: f64, z: f64) -> &mut Self {
+        self.0.refpos = ffi::POSOPT_POS_XYZ as i32;
+        self.0.rb = [x, y, z];
+        self
+    }
+
+    /// Set base station position in geodetic coordinates
+    /// (latitude and longitude in degrees, height in meters).
+    ///
+    /// Equivalent to the `-l` flag in `rnx2rtkp`.
+    pub fn set_base_position_llh(&mut self, lat_deg: f64, lon_deg: f64, height: f64) -> &mut Self {
+        self.0.refpos = ffi::POSOPT_POS_LLH as i32;
+        let pos = [lat_deg.to_radians(), lon_deg.to_radians(), height];
+        unsafe { ffi::pos2ecef(pos.as_ptr(), self.0.rb.as_mut_ptr()) };
+        self
+    }
+
+    /// Get base station position in ECEF coordinates (meters).
+    pub fn base_position_ecef(&self) -> [f64; 3] {
+        self.0.rb
+    }
+
     /// Set troposphere correction option.
     pub fn set_troposphere(&mut self, opt: TropOpt) -> &mut Self {
         self.0.tropopt = opt as i32;
