@@ -6,6 +6,7 @@
 #![cfg(feature = "rtcm")]
 
 use rtklib_ffi::rtcm::{DecodeResult, MsgType, RtcmDecoder};
+use rtklib_sys::rtklib as ffi;
 
 #[test]
 fn decode_rtcm3_ephemeris() {
@@ -14,22 +15,37 @@ fn decode_rtcm3_ephemeris() {
 
     let mut ephemeris_count = 0u32;
     let mut msg_types: Vec<MsgType> = Vec::new();
+    let mut gps_sats: Vec<u8> = Vec::new();
+    let mut gal_sats: Vec<u8> = Vec::new();
+    let mut prev_obs_n = 0usize;
 
     for &byte in &data {
-        match decoder.decode(byte) {
-            Ok(DecodeResult::Incomplete) => {}
-            Ok(DecodeResult::Ephemeris) => {
+        match decoder.decode(byte).expect("RTCM3 decode error") {
+            DecodeResult::Incomplete => {
+                // MSM7 messages with sync=1 return Incomplete but still
+                // store observations in the internal buffer. Detect this
+                // by watching `observation_count` change.
+                let n = decoder.observation_count();
+                if n != prev_obs_n && n > 0 {
+                    prev_obs_n = n;
+                    let sats: Vec<u8> =
+                        decoder.observations().iter().map(|o| o.sat()).collect();
+                    match decoder.message_type() {
+                        Ok(MsgType::GpsMsm7) => gps_sats = sats,
+                        Ok(MsgType::GalMsm7) => gal_sats = sats,
+                        _ => {}
+                    }
+                }
+            }
+            DecodeResult::Ephemeris => {
+                let mt = decoder.message_type().expect("unknown message type");
                 ephemeris_count += 1;
-                if let Ok(mt) = decoder.message_type() {
-                    msg_types.push(mt);
-                }
+                msg_types.push(mt);
             }
-            Ok(_) => {
-                if let Ok(mt) = decoder.message_type() {
-                    msg_types.push(mt);
-                }
+            _ => {
+                let mt = decoder.message_type().expect("unknown message type");
+                msg_types.push(mt);
             }
-            Err(_) => {}
         }
     }
 
@@ -48,4 +64,12 @@ fn decode_rtcm3_ephemeris() {
         msg_types.contains(&MsgType::GalInavEphemeris),
         "expected Galileo ephemeris"
     );
+
+    let gps_sat_10 = unsafe { ffi::satno(ffi::SYS_GPS as i32, 10) } as u8;
+    let gal_sat_4 = unsafe { ffi::satno(ffi::SYS_GAL as i32, 4) } as u8;
+
+    assert_eq!(gps_sats.len(), 7, "expected 7 GPS observations");
+    assert_eq!(gps_sats[0], gps_sat_10, "expected first GPS sat to be PRN 10");
+    assert_eq!(gal_sats.len(), 6, "expected 6 Galileo observations");
+    assert_eq!(gal_sats[0], gal_sat_4, "expected first Galileo sat to be PRN 4");
 }
