@@ -1,3 +1,17 @@
+//! Safe Rust bindings for [RTKLIB](https://github.com/rtklibexplorer/RTKLIB).
+//!
+//! # Features
+//!
+//! Enable functionality via Cargo features:
+//!
+//! - **`ppk`** — Post-processed kinematic positioning via [`postpos()`].
+//! - **`rtcm`** — RTCM3 message decoding via [`RtcmDecoder`].
+//! - **`conv`** — File format conversion.
+//! - **`raw`** — Raw receiver data decoding.
+//! - **`net`** — Network streaming.
+//! - **`gis`** — GIS data support.
+//! - **`tle`** — TLE satellite tracking.
+
 use rtklib_sys::rtklib as ffi;
 
 #[cfg(feature = "ppk")]

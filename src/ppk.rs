@@ -1,3 +1,19 @@
+//! Post-processed kinematic positioning.
+//!
+//! ```no_run
+//! use rtklib_ffi::ppk::{PrcOpt, SolOpt, FilOpt, postpos};
+//!
+//! let popt = PrcOpt::kinematic();
+//! let sopt = SolOpt::default();
+//! let fopt = FilOpt::default();
+//!
+//! postpos(
+//!     "rover.obs", "base.obs",
+//!     &["nav.nav"], "output.pos",
+//!     &popt, &sopt, &fopt,
+//! ).unwrap();
+//! ```
+
 use crate::NavSys;
 use rtklib_sys::rtklib as ffi;
 use std::ffi::CString;

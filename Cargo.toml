@@ -8,6 +8,7 @@ repository = "https://github.com/kpwebb/rtklib-ffi"
 license = "MIT"
 keywords = ["rtk", "rtklib", "gnss",]
 homepage = "https://github.com/kpwebb/rtklib-ffi"
+readme = "README.md"
 exclude = [
     ".gitignore",
     "test/**/*",

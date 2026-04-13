@@ -1,3 +1,26 @@
+//! RTCM3 message decoding.
+//!
+//! ```no_run
+//! use rtklib_ffi::rtcm::{DecodeResult, MsgType, RtcmDecoder};
+//!
+//! let mut decoder = RtcmDecoder::new().unwrap();
+//! # let rtcm_bytes: Vec<u8> = vec![];
+//!
+//! for &byte in &rtcm_bytes {
+//!     match decoder.decode(byte) {
+//!         Ok(DecodeResult::Observation) => {
+//!             let obs = decoder.observations();
+//!             // process observations...
+//!         }
+//!         Ok(DecodeResult::Ephemeris) => {
+//!             let msg_type = decoder.message_type().unwrap();
+//!             // handle ephemeris...
+//!         }
+//!         _ => {}
+//!     }
+//! }
+//! ```
+
 use num_enum::TryFromPrimitive;
 use rtklib_sys::rtklib as ffi;
 use std::convert::TryFrom;
@@ -153,7 +176,6 @@ impl RtcmDecoder {
     pub fn station_id(&self) -> i32 {
         self.0.staid
     }
-
 }
 
 impl Drop for RtcmDecoder {
