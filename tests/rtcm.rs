@@ -6,7 +6,7 @@
 #![cfg(feature = "rtcm")]
 
 use rtklib_ffi::rtcm::{DecodeResult, MsgType, RtcmDecoder};
-use rtklib_sys::rtklib as ffi;
+use rtklib_ffi::{satno, NavSys};
 
 #[test]
 fn decode_rtcm3_ephemeris() {
@@ -28,8 +28,7 @@ fn decode_rtcm3_ephemeris() {
                 let n = decoder.observation_count();
                 if n != prev_obs_n && n > 0 {
                     prev_obs_n = n;
-                    let sats: Vec<u8> =
-                        decoder.observations().iter().map(|o| o.sat()).collect();
+                    let sats: Vec<u8> = decoder.observations().iter().map(|o| o.sat()).collect();
                     match decoder.message_type() {
                         Ok(MsgType::GpsMsm7) => gps_sats = sats,
                         Ok(MsgType::GalMsm7) => gal_sats = sats,
@@ -65,11 +64,16 @@ fn decode_rtcm3_ephemeris() {
         "expected Galileo ephemeris"
     );
 
-    let gps_sat_10 = unsafe { ffi::satno(ffi::SYS_GPS as i32, 10) } as u8;
-    let gal_sat_4 = unsafe { ffi::satno(ffi::SYS_GAL as i32, 4) } as u8;
-
     assert_eq!(gps_sats.len(), 7, "expected 7 GPS observations");
-    assert_eq!(gps_sats[0], gps_sat_10, "expected first GPS sat to be PRN 10");
+    assert_eq!(
+        gps_sats[0],
+        satno(NavSys::Gps, 10).expect("GPS PRN 10 out of range"),
+        "expected first GPS sat to be PRN 10"
+    );
     assert_eq!(gal_sats.len(), 6, "expected 6 Galileo observations");
-    assert_eq!(gal_sats[0], gal_sat_4, "expected first Galileo sat to be PRN 4");
+    assert_eq!(
+        gal_sats[0],
+        satno(NavSys::Gal, 4).expect("Galileo PRN 4 out of range"),
+        "expected first Galileo sat to be PRN 4"
+    );
 }

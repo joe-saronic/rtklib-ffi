@@ -49,6 +49,18 @@ bitflags::bitflags! {
     }
 }
 
+/// Convert a constellation and PRN/slot number to an internal satellite number.
+///
+/// Returns `None` if the PRN is out of range for the constellation.
+pub fn satno(sys: NavSys, prn: i32) -> Option<u8> {
+    let n = unsafe { ffi::satno(sys.bits() as i32, prn) };
+    if n == 0 {
+        None
+    } else {
+        Some(n as u8)
+    }
+}
+
 /// Solution quality status.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(i32)]
