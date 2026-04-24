@@ -12,7 +12,9 @@
 //! - **`gis`** — GIS data support.
 //! - **`tle`** — TLE satellite tracking.
 
+use num_enum::TryFromPrimitive;
 use rtklib_sys::rtklib as ffi;
+use std::convert::TryFrom;
 
 #[cfg(feature = "ppk")]
 pub mod ppk;
@@ -61,24 +63,122 @@ pub fn satno(sys: NavSys, prn: i32) -> Option<u8> {
     }
 }
 
+/// Geodetic position: latitude and longitude in radians, height in meters.
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+#[repr(C)]
+pub struct Llh {
+    pub lat_rad: f64,
+    pub lon_rad: f64,
+    pub height_m: f64,
+}
+
+impl Llh {
+    /// Construct from latitude and longitude in degrees, height in meters.
+    pub fn from_deg(lat_deg: f64, lon_deg: f64, height_m: f64) -> Self {
+        Self { lat_rad: lat_deg.to_radians(), lon_rad: lon_deg.to_radians(), height_m }
+    }
+
+    /// Convert to ECEF coordinates (meters).
+    pub fn to_ecef(&self) -> [f64; 3] {
+        let mut r = [0.0f64; 3];
+        unsafe { ffi::pos2ecef(self as *const Llh as *const f64, r.as_mut_ptr()) };
+        r
+    }
+}
+
+impl From<[f64; 3]> for Llh {
+    fn from(a: [f64; 3]) -> Self {
+        Self { lat_rad: a[0], lon_rad: a[1], height_m: a[2] }
+    }
+}
+
+impl From<Llh> for [f64; 3] {
+    fn from(l: Llh) -> Self {
+        [l.lat_rad, l.lon_rad, l.height_m]
+    }
+}
+
+/// Convert ECEF position (meters) to geodetic coordinates.
+///
+/// Returns latitude and longitude in radians, height in meters.
+pub fn ecef2pos(ecef: [f64; 3]) -> Llh {
+    let mut pos = Llh::default();
+    unsafe { ffi::ecef2pos(ecef.as_ptr(), &mut pos as *mut Llh as *mut f64) };
+    pos
+}
+
+/// GPS time: seconds since Unix epoch plus sub-second fraction.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct GpsTime(pub(crate) ffi::gtime_t);
+
+impl GpsTime {
+    /// Time zero (Unix epoch).
+    pub fn zero() -> Self {
+        Self(ffi::gtime_t { time: 0, sec: 0.0 })
+    }
+
+    /// Construct from Unix seconds and a fractional part in [0, 1).
+    pub fn from_unix(secs: i64, frac: f64) -> Self {
+        Self(ffi::gtime_t { time: secs, sec: frac })
+    }
+
+    /// Construct from GPS week number and time-of-week (seconds).
+    pub fn from_gps(week: i32, tow: f64) -> Self {
+        Self(unsafe { ffi::gpst2time(week, tow) })
+    }
+
+    /// Unix seconds component (integer part).
+    pub fn unix_secs(&self) -> i64 {
+        self.0.time
+    }
+
+    /// Sub-second fractional part.
+    pub fn frac_secs(&self) -> f64 {
+        self.0.sec
+    }
+}
+
+#[cfg(feature = "hifitime")]
+impl From<Epoch> for GpsTime {
+    fn from(e: Epoch) -> Self {
+        let unix_s = e.to_unix_seconds();
+        let secs = unix_s.floor() as i64;
+        let frac = unix_s - secs as f64;
+        GpsTime(ffi::gtime_t { time: secs, sec: frac })
+    }
+}
+
+#[cfg(feature = "hifitime")]
+impl From<GpsTime> for Epoch {
+    fn from(t: GpsTime) -> Self {
+        Epoch::from_unix_seconds(t.0.time as f64 + t.0.sec)
+    }
+}
+
 /// Solution quality status.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(i32)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
+#[repr(u32)]
 pub enum SolStatus {
     /// No solution available. From SOLQ_NONE.
-    None = ffi::SOLQ_NONE as i32,
+    None = ffi::SOLQ_NONE,
     /// Integer ambiguity resolved. From SOLQ_FIX.
-    Fix = ffi::SOLQ_FIX as i32,
+    Fix = ffi::SOLQ_FIX,
     /// Ambiguity not resolved, float solution. From SOLQ_FLOAT.
-    Float = ffi::SOLQ_FLOAT as i32,
+    Float = ffi::SOLQ_FLOAT,
     /// SBAS corrected solution. From SOLQ_SBAS.
-    Sbas = ffi::SOLQ_SBAS as i32,
+    Sbas = ffi::SOLQ_SBAS,
     /// DGPS/DGNSS corrected solution. From SOLQ_DGPS.
-    Dgps = ffi::SOLQ_DGPS as i32,
+    Dgps = ffi::SOLQ_DGPS,
     /// Single point solution. From SOLQ_SINGLE.
-    Single = ffi::SOLQ_SINGLE as i32,
+    Single = ffi::SOLQ_SINGLE,
     /// Precise Point Positioning converged solution. From SOLQ_PPP.
-    Ppp = ffi::SOLQ_PPP as i32,
+    Ppp = ffi::SOLQ_PPP,
     /// Dead reckoning solution. From SOLQ_DR.
-    DeadReckoning = ffi::SOLQ_DR as i32,
+    DeadReckoning = ffi::SOLQ_DR,
+}
+
+impl From<u32> for SolStatus {
+    fn from(v: u32) -> Self {
+        Self::try_from(v).unwrap_or(Self::None)
+    }
 }

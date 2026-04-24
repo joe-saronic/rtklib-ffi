@@ -15,88 +15,89 @@
 //! ```
 
 use crate::NavSys;
+use num_enum::TryFromPrimitive;
 use rtklib_sys::rtklib as ffi;
 use std::ffi::CString;
 
 /// Positioning mode.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(i32)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
+#[repr(u32)]
 pub enum PosMode {
     /// Single point positioning. From PMODE_SINGLE.
-    Single = ffi::PMODE_SINGLE as i32,
+    Single = ffi::PMODE_SINGLE,
     /// Differential GPS / DGNSS. From PMODE_DGPS.
-    Dgps = ffi::PMODE_DGPS as i32,
+    Dgps = ffi::PMODE_DGPS,
     /// Kinematic positioning. From PMODE_KINEMA.
-    Kinematic = ffi::PMODE_KINEMA as i32,
+    Kinematic = ffi::PMODE_KINEMA,
     /// Static positioning. From PMODE_STATIC.
-    Static = ffi::PMODE_STATIC as i32,
+    Static = ffi::PMODE_STATIC,
     /// Static positioning starting from a known position. From PMODE_STATIC_START.
-    StaticStart = ffi::PMODE_STATIC_START as i32,
+    StaticStart = ffi::PMODE_STATIC_START,
     /// Moving base station. From PMODE_MOVEB.
-    MovingBase = ffi::PMODE_MOVEB as i32,
+    MovingBase = ffi::PMODE_MOVEB,
     /// Fixed position. From PMODE_FIXED.
-    Fixed = ffi::PMODE_FIXED as i32,
+    Fixed = ffi::PMODE_FIXED,
     /// Precise Point Positioning, kinematic. From PMODE_PPP_KINEMA.
-    PppKinematic = ffi::PMODE_PPP_KINEMA as i32,
+    PppKinematic = ffi::PMODE_PPP_KINEMA,
     /// Precise Point Positioning, static. From PMODE_PPP_STATIC.
-    PppStatic = ffi::PMODE_PPP_STATIC as i32,
+    PppStatic = ffi::PMODE_PPP_STATIC,
     /// Precise Point Positioning, fixed. From PMODE_PPP_FIXED.
-    PppFixed = ffi::PMODE_PPP_FIXED as i32,
+    PppFixed = ffi::PMODE_PPP_FIXED,
 }
 
 /// Solution output format.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(i32)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
+#[repr(u32)]
 pub enum SolFormat {
     /// Latitude, longitude, and height. From SOLF_LLH.
-    Llh = ffi::SOLF_LLH as i32,
+    Llh = ffi::SOLF_LLH,
     /// X, Y, Z in ECEF coordinates. From SOLF_XYZ.
-    Xyz = ffi::SOLF_XYZ as i32,
+    Xyz = ffi::SOLF_XYZ,
     /// East, north, up baseline components. From SOLF_ENU.
-    Enu = ffi::SOLF_ENU as i32,
+    Enu = ffi::SOLF_ENU,
     /// NMEA-0183 sentences. From SOLF_NMEA.
-    Nmea = ffi::SOLF_NMEA as i32,
+    Nmea = ffi::SOLF_NMEA,
 }
 
 /// Ionosphere correction option.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(i32)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
+#[repr(u32)]
 pub enum IonoOpt {
     /// Ionosphere correction disabled. From IONOOPT_OFF.
-    Off = ffi::IONOOPT_OFF as i32,
+    Off = ffi::IONOOPT_OFF,
     /// Klobuchar broadcast model. From IONOOPT_BRDC.
-    Broadcast = ffi::IONOOPT_BRDC as i32,
+    Broadcast = ffi::IONOOPT_BRDC,
     /// SBAS ionosphere model. From IONOOPT_SBAS.
-    Sbas = ffi::IONOOPT_SBAS as i32,
+    Sbas = ffi::IONOOPT_SBAS,
     /// Iono-free linear combination of L1/L2 or L1/L5. From IONOOPT_IFLC.
-    IonFreeLC = ffi::IONOOPT_IFLC as i32,
+    IonFreeLC = ffi::IONOOPT_IFLC,
     /// Ionosphere delay estimation. From IONOOPT_EST.
-    Estimation = ffi::IONOOPT_EST as i32,
+    Estimation = ffi::IONOOPT_EST,
     /// IONEX TEC grid model. From IONOOPT_TEC.
-    Tec = ffi::IONOOPT_TEC as i32,
+    Tec = ffi::IONOOPT_TEC,
     /// QZSS broadcast ionosphere model. From IONOOPT_QZS.
-    Qzs = ffi::IONOOPT_QZS as i32,
+    Qzs = ffi::IONOOPT_QZS,
 }
 
 /// Troposphere correction option.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(i32)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
+#[repr(u32)]
 pub enum TropOpt {
     /// Troposphere correction disabled. From TROPOPT_OFF.
-    Off = ffi::TROPOPT_OFF as i32,
+    Off = ffi::TROPOPT_OFF,
     /// Saastamoinen model. From TROPOPT_SAAS.
-    Saastamoinen = ffi::TROPOPT_SAAS as i32,
+    Saastamoinen = ffi::TROPOPT_SAAS,
     /// SBAS troposphere model. From TROPOPT_SBAS.
-    Sbas = ffi::TROPOPT_SBAS as i32,
+    Sbas = ffi::TROPOPT_SBAS,
     /// Zenith total delay estimation. From TROPOPT_EST.
-    Estimation = ffi::TROPOPT_EST as i32,
+    Estimation = ffi::TROPOPT_EST,
     /// Zenith total delay plus horizontal gradient estimation. From TROPOPT_ESTG.
-    EstimationGrad = ffi::TROPOPT_ESTG as i32,
+    EstimationGrad = ffi::TROPOPT_ESTG,
 }
 
 /// Ambiguity resolution mode.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(i32)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
+#[repr(u32)]
 pub enum ArMode {
     /// Ambiguity resolution disabled.
     Off = 0,
