@@ -11,15 +11,22 @@
 //! - **`net`** — Network streaming.
 //! - **`gis`** — GIS data support.
 //! - **`tle`** — TLE satellite tracking.
+//! - **`hifitime`** — Conversions between [`GpsTime`] and [`hifitime::Epoch`].
 
+#[cfg(feature = "hifitime")]
+use hifitime::Epoch;
 use num_enum::TryFromPrimitive;
 use rtklib_sys::rtklib as ffi;
-use std::convert::TryFrom;
 
 #[cfg(feature = "ppk")]
 pub mod ppk;
 #[cfg(feature = "ppk")]
 pub use ppk::*;
+
+#[cfg(feature = "ppk")]
+pub mod solution;
+#[cfg(feature = "ppk")]
+pub use solution::*;
 
 #[cfg(feature = "rtcm")]
 pub mod rtcm;
@@ -75,7 +82,11 @@ pub struct Llh {
 impl Llh {
     /// Construct from latitude and longitude in degrees, height in meters.
     pub fn from_deg(lat_deg: f64, lon_deg: f64, height_m: f64) -> Self {
-        Self { lat_rad: lat_deg.to_radians(), lon_rad: lon_deg.to_radians(), height_m }
+        Self {
+            lat_rad: lat_deg.to_radians(),
+            lon_rad: lon_deg.to_radians(),
+            height_m,
+        }
     }
 
     /// Convert to ECEF coordinates (meters).
@@ -88,7 +99,11 @@ impl Llh {
 
 impl From<[f64; 3]> for Llh {
     fn from(a: [f64; 3]) -> Self {
-        Self { lat_rad: a[0], lon_rad: a[1], height_m: a[2] }
+        Self {
+            lat_rad: a[0],
+            lon_rad: a[1],
+            height_m: a[2],
+        }
     }
 }
 
@@ -108,7 +123,7 @@ pub fn ecef2pos(ecef: [f64; 3]) -> Llh {
 }
 
 /// GPS time: seconds since Unix epoch plus sub-second fraction.
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug)]
 pub struct GpsTime(pub(crate) ffi::gtime_t);
 
 impl GpsTime {
@@ -119,7 +134,10 @@ impl GpsTime {
 
     /// Construct from Unix seconds and a fractional part in [0, 1).
     pub fn from_unix(secs: i64, frac: f64) -> Self {
-        Self(ffi::gtime_t { time: secs, sec: frac })
+        Self(ffi::gtime_t {
+            time: secs,
+            sec: frac,
+        })
     }
 
     /// Construct from GPS week number and time-of-week (seconds).
@@ -144,7 +162,10 @@ impl From<Epoch> for GpsTime {
         let unix_s = e.to_unix_seconds();
         let secs = unix_s.floor() as i64;
         let frac = unix_s - secs as f64;
-        GpsTime(ffi::gtime_t { time: secs, sec: frac })
+        GpsTime(ffi::gtime_t {
+            time: secs,
+            sec: frac,
+        })
     }
 }
 
@@ -175,10 +196,4 @@ pub enum SolStatus {
     Ppp = ffi::SOLQ_PPP,
     /// Dead reckoning solution. From SOLQ_DR.
     DeadReckoning = ffi::SOLQ_DR,
-}
-
-impl From<u32> for SolStatus {
-    fn from(v: u32) -> Self {
-        Self::try_from(v).unwrap_or(Self::None)
-    }
 }

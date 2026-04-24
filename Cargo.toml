@@ -20,6 +20,7 @@ members = ["rtklib-sys"]
 [features]
 conv = ["rtklib-sys/conv"]
 gis = ["rtklib-sys/gis"]
+hifitime = ["dep:hifitime"]
 net = ["rtklib-sys/net"]
 ppk = ["rtklib-sys/ppk"]
 raw = ["rtklib-sys/raw"]
@@ -28,6 +29,7 @@ tle = ["rtklib-sys/tle"]
 
 [dependencies]
 bitflags = "2"
+hifitime = { version = "4", optional = true }
 num_enum = "0.7.3"
 rtklib-sys = { path = "rtklib-sys/", version = "0.2.0" }
 thiserror = "2"
