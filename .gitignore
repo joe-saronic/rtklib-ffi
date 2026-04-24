@@ -1,3 +1,5 @@
 target
+result
 .vscode/
 .DS_Store
+.direnv/
