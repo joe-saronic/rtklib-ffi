@@ -1,8 +1,13 @@
+//! Solution file I/O.
+//!
+//! Wraps RTKLIB's `sol_t` / `solbuf_t` types. [`read_sol`] wraps `readsol`,
+//! [`read_solt`] wraps `readsolt`, and [`write_sol`] wraps `outsolheads` and
+//! `outsols` from `solution.c`.
+
 use crate::{ppk::SolOpt, GpsTime, Llh, SolStatus};
 use num_enum::TryFromPrimitive;
 use rtklib_sys::rtklib as ffi;
 use std::{
-    convert::TryFrom,
     ffi::CString,
     fs::File,
     io::{Error as IoError, Write},

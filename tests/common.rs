@@ -16,9 +16,9 @@ fn navsys_bitflags() {
 
 #[test]
 fn sol_status_values() {
-    assert_eq!(SolStatus::None as i32, 0);
-    assert_eq!(SolStatus::Fix as i32, 1);
-    assert_eq!(SolStatus::Float as i32, 2);
-    assert_eq!(SolStatus::Single as i32, 5);
+    assert_eq!(SolStatus::try_from(0u32).unwrap(), SolStatus::None);
+    assert_eq!(SolStatus::try_from(1u32).unwrap(), SolStatus::Fix);
+    assert_eq!(SolStatus::try_from(2u32).unwrap(), SolStatus::Float);
+    assert_eq!(SolStatus::try_from(5u32).unwrap(), SolStatus::Single);
     assert_ne!(SolStatus::Fix, SolStatus::Float);
 }

@@ -2,7 +2,7 @@
 name = "rtklib-ffi"
 description = "Rust wrapper for RTKLIB"
 version = "0.2.0"
-edition = "2018"
+edition = "2021"
 authors = ["Kevin Webb", "Joseph Fox-Rabinovitz"]
 repository = "https://github.com/kpwebb/rtklib-ffi"
 license = "MIT"

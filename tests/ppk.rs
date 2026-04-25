@@ -24,13 +24,13 @@ fn prcopt_kinematic_builder() {
         .set_ionosphere(IonoOpt::IonFreeLC)
         .set_troposphere(TropOpt::Saastamoinen);
 
-    assert_eq!(opt.mode(), PosMode::Kinematic as i32);
+    assert_eq!(opt.mode(), PosMode::Kinematic);
     assert_eq!(opt.navsys(), NavSys::Gps | NavSys::Glo | NavSys::Gal);
     assert_eq!(opt.frequencies(), 2);
     assert!((opt.elevation_mask() - 15.0_f64.to_radians()).abs() < 1e-12);
-    assert_eq!(opt.ar_mode(), ArMode::FixAndHold as i32);
-    assert_eq!(opt.ionosphere(), IonoOpt::IonFreeLC as i32);
-    assert_eq!(opt.troposphere(), TropOpt::Saastamoinen as i32);
+    assert_eq!(opt.ar_mode(), ArMode::FixAndHold);
+    assert_eq!(opt.ionosphere(), IonoOpt::IonFreeLC);
+    assert_eq!(opt.troposphere(), TropOpt::Saastamoinen);
 }
 
 #[test]
@@ -41,11 +41,11 @@ fn prcopt_static_builder() {
         .set_elevation_mask(10.0)
         .set_ar_mode(ArMode::Continuous);
 
-    assert_eq!(opt.mode(), PosMode::Static as i32);
+    assert_eq!(opt.mode(), PosMode::Static);
     assert_eq!(opt.navsys(), NavSys::Gps);
     assert_eq!(opt.frequencies(), 1);
     assert!((opt.elevation_mask() - 10.0_f64.to_radians()).abs() < 1e-12);
-    assert_eq!(opt.ar_mode(), ArMode::Continuous as i32);
+    assert_eq!(opt.ar_mode(), ArMode::Continuous);
 }
 
 #[test]
@@ -56,7 +56,7 @@ fn solopt_setters() {
         .set_time_decimals(3)
         .set_output_header(true);
 
-    assert_eq!(sopt.format(), SolFormat::Xyz as i32);
+    assert_eq!(sopt.format(), SolFormat::Xyz);
     assert_eq!(sopt.time_format(), 1);
     assert_eq!(sopt.time_decimals(), 3);
     assert!(sopt.output_header());

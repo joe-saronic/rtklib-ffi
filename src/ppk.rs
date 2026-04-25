@@ -141,9 +141,10 @@ impl PrcOpt {
         self
     }
 
-    /// Get positioning mode as raw value.
-    pub fn mode(&self) -> i32 {
-        self.0.mode
+    /// Get positioning mode.
+    pub fn mode(&self) -> PosMode {
+        // Only set via typed setters or RTKLIB defaults; an invalid value is an unreachable bug.
+        PosMode::try_from(self.0.mode as u32).unwrap()
     }
 
     /// Set enabled navigation systems.
@@ -185,9 +186,10 @@ impl PrcOpt {
         self
     }
 
-    /// Get ambiguity resolution mode as raw value.
-    pub fn ar_mode(&self) -> i32 {
-        self.0.modear
+    /// Get ambiguity resolution mode.
+    pub fn ar_mode(&self) -> ArMode {
+        // Only set via typed setters or RTKLIB defaults; an invalid value is an unreachable bug.
+        ArMode::try_from(self.0.modear as u32).unwrap()
     }
 
     /// Set ionosphere correction option.
@@ -196,9 +198,10 @@ impl PrcOpt {
         self
     }
 
-    /// Get ionosphere correction option as raw value.
-    pub fn ionosphere(&self) -> i32 {
-        self.0.ionoopt
+    /// Get ionosphere correction option.
+    pub fn ionosphere(&self) -> IonoOpt {
+        // Only set via typed setters or RTKLIB defaults; an invalid value is an unreachable bug.
+        IonoOpt::try_from(self.0.ionoopt as u32).unwrap()
     }
 
     /// Set base station position in ECEF coordinates (meters).
@@ -232,9 +235,10 @@ impl PrcOpt {
         self
     }
 
-    /// Get troposphere correction option as raw value.
-    pub fn troposphere(&self) -> i32 {
-        self.0.tropopt
+    /// Get troposphere correction option.
+    pub fn troposphere(&self) -> TropOpt {
+        // Only set via typed setters or RTKLIB defaults; an invalid value is an unreachable bug.
+        TropOpt::try_from(self.0.tropopt as u32).unwrap()
     }
 
     pub(crate) fn as_ffi(&self) -> &ffi::prcopt_t {
@@ -258,9 +262,10 @@ impl SolOpt {
         self
     }
 
-    /// Get solution output format as raw value.
-    pub fn format(&self) -> i32 {
-        self.0.posf
+    /// Get solution output format.
+    pub fn format(&self) -> SolFormat {
+        // Only set via typed setters or RTKLIB defaults; an invalid value is an unreachable bug.
+        SolFormat::try_from(self.0.posf as u32).unwrap()
     }
 
     /// Set time format. 0=sssss.s, 1=yyyy/mm/dd hh:mm:ss.s.
