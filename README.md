@@ -1,1 +1,1 @@
-Rust bindgen interface for RTKLIB. This project references a [fork](https://github.com/kpwebb/RTKLIB) of the [rtkexplorer/rtklib](https://github.com/rtklibexplorer/RTKLIB/releases) project to add additional rtcm3 related function exports. YMMV
+Safe Rust bindings for [RTKLIB](https://github.com/rtklibexplorer/RTKLIB). The unsafe bindings are fairly comprehensive. Safe bindings are available for RTCM3 message decoding and PPK post-processing. YMMV.

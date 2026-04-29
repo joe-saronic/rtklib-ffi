@@ -1,9 +1,9 @@
 [package]
 name = "rtklib-sys"
-version = "0.1.3"
+version = "0.2.0"
 rust-version = "1.82.0"
 edition = "2018"
-authors = ["Kevin Webb"]
+authors = ["Kevin Webb", "Joseph Fox-Rabinovitz"]
 license = "MIT"
 description = "Native bindings to RTKLIB"
 readme = "README.md"
@@ -13,8 +13,13 @@ categories = [ "api-bindings", "rtklib", "external-ffi-bindings" ]
 links = "rtklib-ffi"
 
 [features]
-default = [ "rtcm3" ]
-rtcm3 = []
+conv = []
+gis = []
+net = []
+ppk = []
+raw = []
+rtcm = []
+tle = []
 
 
 [build-dependencies]
