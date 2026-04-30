@@ -25,6 +25,7 @@ net = ["rtklib-sys/net"]
 ppk = ["rtklib-sys/ppk"]
 raw = ["rtklib-sys/raw"]
 rtcm = ["rtklib-sys/rtcm"]
+strum = ["dep:strum"]
 tle = ["rtklib-sys/tle"]
 
 [dependencies]
@@ -32,6 +33,7 @@ bitflags = "2"
 hifitime = { version = "4", optional = true }
 num_enum = "0.7.3"
 rtklib-sys = { path = "rtklib-sys/", version = "0.2.0" }
+strum = { version = "0.27", features = ["derive"], optional = true }
 thiserror = "2"
 
 [dev-dependencies]

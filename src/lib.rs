@@ -4,14 +4,15 @@
 //!
 //! Enable functionality via Cargo features:
 //!
-//! - **`ppk`** — Post-processed kinematic positioning via [`postpos()`].
-//! - **`rtcm`** — RTCM3 message decoding via [`RtcmDecoder`].
-//! - **`conv`** — File format conversion.
-//! - **`raw`** — Raw receiver data decoding.
-//! - **`net`** — Network streaming.
-//! - **`gis`** — GIS data support.
-//! - **`tle`** — TLE satellite tracking.
-//! - **`hifitime`** — Conversions between [`GpsTime`] and [`hifitime::Epoch`].
+//! - **`ppk`**: Post-processed kinematic positioning via [`postpos()`].
+//! - **`rtcm`**: RTCM3 message decoding via [`RtcmDecoder`].
+//! - **`conv`**: File format conversion.
+//! - **`raw`**: Raw receiver data decoding.
+//! - **`net`**: Network streaming.
+//! - **`gis`**: GIS data support.
+//! - **`tle`**: TLE satellite tracking.
+//! - **`hifitime`**: Conversions between [`GpsTime`] and [`hifitime::Epoch`].
+//! - **`strum`**: Adds [`std::fmt::Display`] support for enums via the optional [`strum`](https://docs.rs/strum) dependency.
 
 #[cfg(feature = "hifitime")]
 use hifitime::Epoch;
@@ -177,6 +178,8 @@ impl From<GpsTime> for Epoch {
 }
 
 /// Solution quality status.
+#[cfg_attr(feature = "strum", derive(strum::Display))]
+#[cfg_attr(feature = "strum", strum(serialize_all = "snake_case"))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
 #[repr(u32)]
 pub enum SolStatus {

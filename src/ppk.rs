@@ -20,6 +20,8 @@ use rtklib_sys::rtklib as ffi;
 use std::ffi::CString;
 
 /// Positioning mode.
+#[cfg_attr(feature = "strum", derive(strum::Display))]
+#[cfg_attr(feature = "strum", strum(serialize_all = "snake_case"))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
 #[repr(u32)]
 pub enum PosMode {
@@ -46,6 +48,8 @@ pub enum PosMode {
 }
 
 /// Solution output format.
+#[cfg_attr(feature = "strum", derive(strum::Display))]
+#[cfg_attr(feature = "strum", strum(serialize_all = "snake_case"))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
 #[repr(u32)]
 pub enum SolFormat {
@@ -60,6 +64,8 @@ pub enum SolFormat {
 }
 
 /// Ionosphere correction option.
+#[cfg_attr(feature = "strum", derive(strum::Display))]
+#[cfg_attr(feature = "strum", strum(serialize_all = "snake_case"))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
 #[repr(u32)]
 pub enum IonoOpt {
@@ -70,7 +76,7 @@ pub enum IonoOpt {
     /// SBAS ionosphere model. From IONOOPT_SBAS.
     Sbas = ffi::IONOOPT_SBAS,
     /// Iono-free linear combination of L1/L2 or L1/L5. From IONOOPT_IFLC.
-    IonFreeLC = ffi::IONOOPT_IFLC,
+    IonFreeLc = ffi::IONOOPT_IFLC,
     /// Ionosphere delay estimation. From IONOOPT_EST.
     Estimation = ffi::IONOOPT_EST,
     /// IONEX TEC grid model. From IONOOPT_TEC.
@@ -80,6 +86,8 @@ pub enum IonoOpt {
 }
 
 /// Troposphere correction option.
+#[cfg_attr(feature = "strum", derive(strum::Display))]
+#[cfg_attr(feature = "strum", strum(serialize_all = "snake_case"))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
 #[repr(u32)]
 pub enum TropOpt {
@@ -96,6 +104,8 @@ pub enum TropOpt {
 }
 
 /// Ambiguity resolution mode.
+#[cfg_attr(feature = "strum", derive(strum::Display))]
+#[cfg_attr(feature = "strum", strum(serialize_all = "snake_case"))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
 #[repr(u32)]
 pub enum ArMode {

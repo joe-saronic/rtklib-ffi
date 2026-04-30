@@ -21,7 +21,7 @@ fn prcopt_kinematic_builder() {
         .set_frequencies(2)
         .set_elevation_mask(15.0)
         .set_ar_mode(ArMode::FixAndHold)
-        .set_ionosphere(IonoOpt::IonFreeLC)
+        .set_ionosphere(IonoOpt::IonFreeLc)
         .set_troposphere(TropOpt::Saastamoinen);
 
     assert_eq!(opt.mode(), PosMode::Kinematic);
@@ -29,7 +29,7 @@ fn prcopt_kinematic_builder() {
     assert_eq!(opt.frequencies(), 2);
     assert!((opt.elevation_mask() - 15.0_f64.to_radians()).abs() < 1e-12);
     assert_eq!(opt.ar_mode(), ArMode::FixAndHold);
-    assert_eq!(opt.ionosphere(), IonoOpt::IonFreeLC);
+    assert_eq!(opt.ionosphere(), IonoOpt::IonFreeLc);
     assert_eq!(opt.troposphere(), TropOpt::Saastamoinen);
 }
 
