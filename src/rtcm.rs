@@ -21,7 +21,7 @@
 //! }
 //! ```
 
-use crate::ObsData;
+use crate::meas::ObsData;
 use num_enum::TryFromPrimitive;
 use rtklib_sys::rtklib as ffi;
 use std::convert::TryFrom;
@@ -67,7 +67,6 @@ pub enum DecodeResult {
     /// SSR corrections decoded.
     SsrCorrections = 20,
 }
-
 
 /// RTCM3 message decoder.
 ///
