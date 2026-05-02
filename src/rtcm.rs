@@ -46,7 +46,6 @@ pub enum RtcmError {
 /// `5`=station info, `6`=time params, `7`=DGPS corrections,
 /// `9`=special message, `20`=SSR corrections.
 #[cfg_attr(feature = "strum", derive(strum::Display))]
-#[cfg_attr(feature = "strum", strum(serialize_all = "snake_case"))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
 #[repr(i32)]
 pub enum DecodeResult {
@@ -193,7 +192,6 @@ impl Drop for RtcmDecoder {
 /// Reference: [RTCM 3 Message List](https://www.use-snip.com/kb/knowledge-base/rtcm-3-message-list/)
 /// and RTCM Standard 10403.x.
 #[cfg_attr(feature = "strum", derive(strum::Display))]
-#[cfg_attr(feature = "strum", strum(serialize_all = "snake_case"))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
 #[repr(u16)]
 pub enum MsgType {

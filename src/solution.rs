@@ -16,7 +16,7 @@ use thiserror::Error;
 
 /// Coordinate type stored in a [`Solution`].
 #[cfg_attr(feature = "strum", derive(strum::Display))]
-#[cfg_attr(feature = "strum", strum(serialize_all = "snake_case"))]
+#[cfg_attr(feature = "strum", strum(serialize_all = "SCREAMING_SNAKE_CASE"))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
 #[repr(u8)]
 pub enum CoordType {

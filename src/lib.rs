@@ -179,7 +179,7 @@ impl From<GpsTime> for Epoch {
 
 /// Solution quality status.
 #[cfg_attr(feature = "strum", derive(strum::Display))]
-#[cfg_attr(feature = "strum", strum(serialize_all = "snake_case"))]
+#[cfg_attr(feature = "strum", strum(serialize_all = "SCREAMING_SNAKE_CASE"))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
 #[repr(u32)]
 pub enum SolStatus {

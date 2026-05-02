@@ -21,7 +21,7 @@ use std::ffi::CString;
 
 /// Positioning mode.
 #[cfg_attr(feature = "strum", derive(strum::Display))]
-#[cfg_attr(feature = "strum", strum(serialize_all = "snake_case"))]
+#[cfg_attr(feature = "strum", strum(serialize_all = "SCREAMING_SNAKE_CASE"))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
 #[repr(u32)]
 pub enum PosMode {
@@ -49,7 +49,7 @@ pub enum PosMode {
 
 /// Solution output format.
 #[cfg_attr(feature = "strum", derive(strum::Display))]
-#[cfg_attr(feature = "strum", strum(serialize_all = "snake_case"))]
+#[cfg_attr(feature = "strum", strum(serialize_all = "SCREAMING_SNAKE_CASE"))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
 #[repr(u32)]
 pub enum SolFormat {
@@ -65,7 +65,7 @@ pub enum SolFormat {
 
 /// Ionosphere correction option.
 #[cfg_attr(feature = "strum", derive(strum::Display))]
-#[cfg_attr(feature = "strum", strum(serialize_all = "snake_case"))]
+#[cfg_attr(feature = "strum", strum(serialize_all = "SCREAMING_SNAKE_CASE"))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
 #[repr(u32)]
 pub enum IonoOpt {
@@ -87,7 +87,7 @@ pub enum IonoOpt {
 
 /// Troposphere correction option.
 #[cfg_attr(feature = "strum", derive(strum::Display))]
-#[cfg_attr(feature = "strum", strum(serialize_all = "snake_case"))]
+#[cfg_attr(feature = "strum", strum(serialize_all = "SCREAMING_SNAKE_CASE"))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
 #[repr(u32)]
 pub enum TropOpt {
@@ -105,23 +105,23 @@ pub enum TropOpt {
 
 /// Ambiguity resolution mode.
 #[cfg_attr(feature = "strum", derive(strum::Display))]
-#[cfg_attr(feature = "strum", strum(serialize_all = "snake_case"))]
+#[cfg_attr(feature = "strum", strum(serialize_all = "SCREAMING_SNAKE_CASE"))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
 #[repr(u32)]
 pub enum ArMode {
     /// Ambiguity resolution disabled.
-    Off = 0,
+    Off = ffi::ARMODE_OFF,
     /// Continuous ambiguity resolution.
-    Continuous = 1,
+    Continuous = ffi::ARMODE_CONT,
     /// Instantaneous ambiguity resolution.
-    Instantaneous = 2,
+    Instantaneous = ffi::ARMODE_INST,
     /// Fix-and-hold ambiguity resolution.
-    FixAndHold = 3,
+    FixAndHold = ffi::ARMODE_FIXHOLD,
 }
 
 /// Filter solution type.
 #[cfg_attr(feature = "strum", derive(strum::Display))]
-#[cfg_attr(feature = "strum", strum(serialize_all = "snake_case"))]
+#[cfg_attr(feature = "strum", strum(serialize_all = "SCREAMING_SNAKE_CASE"))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
 #[repr(u32)]
 pub enum SolutionType {
