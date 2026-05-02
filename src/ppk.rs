@@ -119,6 +119,22 @@ pub enum ArMode {
     FixAndHold = 3,
 }
 
+/// Filter solution type.
+#[cfg_attr(feature = "strum", derive(strum::Display))]
+#[cfg_attr(feature = "strum", strum(serialize_all = "snake_case"))]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
+#[repr(u32)]
+pub enum SolutionType {
+    /// Forward filter only. From SOLTYPE_FORWARD.
+    Forward = ffi::SOLTYPE_FORWARD,
+    /// Backward filter only. From SOLTYPE_BACKWARD.
+    Backward = ffi::SOLTYPE_BACKWARD,
+    /// Combined forward+backward. From SOLTYPE_COMBINED.
+    Combined = ffi::SOLTYPE_COMBINED,
+    /// Combined forward+backward without phase reset. From SOLTYPE_COMBINED_NORESET.
+    CombinedNoReset = ffi::SOLTYPE_COMBINED_NORESET,
+}
+
 /// Processing options wrapper around `prcopt_t`.
 pub struct PrcOpt(ffi::prcopt_t);
 
@@ -133,7 +149,9 @@ impl PrcOpt {
     pub fn kinematic() -> Self {
         let mut opt = Self::default();
         opt.0.mode = PosMode::Kinematic as i32;
-        opt.0.soltype = 2;
+        opt.0.soltype = SolutionType::Combined as i32;
+        opt.0.modear = ArMode::Continuous as i32;
+        opt.0.nf = 2;
         opt
     }
 
@@ -141,7 +159,9 @@ impl PrcOpt {
     pub fn static_mode() -> Self {
         let mut opt = Self::default();
         opt.0.mode = PosMode::Static as i32;
-        opt.0.soltype = 2;
+        opt.0.soltype = SolutionType::Combined as i32;
+        opt.0.modear = ArMode::Continuous as i32;
+        opt.0.nf = 2;
         opt
     }
 
@@ -155,6 +175,18 @@ impl PrcOpt {
     pub fn mode(&self) -> PosMode {
         // Only set via typed setters or RTKLIB defaults; an invalid value is an unreachable bug.
         PosMode::try_from(self.0.mode as u32).unwrap()
+    }
+
+    /// Set solution type.
+    pub fn set_solution_type(&mut self, sol: SolutionType) -> &mut Self {
+        self.0.soltype = sol as i32;
+        self
+    }
+
+    /// Get solution type.
+    pub fn solution_type(&self) -> SolutionType {
+        // Only set via typed setters or RTKLIB defaults; an invalid value is an unreachable bug.
+        SolutionType::try_from(self.0.soltype as u32).unwrap()
     }
 
     /// Set enabled navigation systems.
