@@ -177,6 +177,49 @@ impl From<GpsTime> for Epoch {
     }
 }
 
+/// A single GNSS observation record.
+///
+/// Transparent wrapper around the FFI `obsd_t` struct. Produced by format decoders.
+#[repr(transparent)]
+pub struct ObsData(ffi::obsd_t);
+
+impl ObsData {
+    /// Satellite number in RTKLIB internal numbering.
+    pub fn sat(&self) -> u8 {
+        self.0.sat
+    }
+
+    /// Carrier phase measurements for up to 3 frequencies, in cycles.
+    pub fn carrier_phase(&self) -> &[f64; 3] {
+        &self.0.L
+    }
+
+    /// Pseudorange measurements for up to 3 frequencies, in meters.
+    pub fn pseudorange(&self) -> &[f64; 3] {
+        &self.0.P
+    }
+
+    /// Doppler measurements for up to 3 frequencies, in Hz.
+    pub fn doppler(&self) -> &[f32; 3] {
+        &self.0.D
+    }
+
+    /// Signal-to-noise ratio for up to 3 frequencies, in dB-Hz.
+    pub fn snr(&self) -> &[f32; 3] {
+        &self.0.SNR
+    }
+
+    /// Signal code identifiers for up to 3 frequencies.
+    pub fn code(&self) -> &[u8; 3] {
+        &self.0.code
+    }
+
+    /// Loss-of-lock indicators for up to 3 frequencies.
+    pub fn lli(&self) -> &[u8; 3] {
+        &self.0.LLI
+    }
+}
+
 /// Solution quality status.
 #[cfg_attr(feature = "strum", derive(strum::Display))]
 #[cfg_attr(feature = "strum", strum(serialize_all = "SCREAMING_SNAKE_CASE"))]

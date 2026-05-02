@@ -21,6 +21,7 @@
 //! }
 //! ```
 
+use crate::ObsData;
 use num_enum::TryFromPrimitive;
 use rtklib_sys::rtklib as ffi;
 use std::convert::TryFrom;
@@ -67,49 +68,6 @@ pub enum DecodeResult {
     SsrCorrections = 20,
 }
 
-/// A single GNSS observation record.
-///
-/// Transparent wrapper around the FFI `obsd_t` struct. References are
-/// obtained via [`RtcmDecoder::observations`].
-#[repr(transparent)]
-pub struct ObsData(ffi::obsd_t);
-
-impl ObsData {
-    /// Satellite number (RTKLIB internal numbering).
-    pub fn sat(&self) -> u8 {
-        self.0.sat
-    }
-
-    /// Carrier phase measurements (cycles) for up to 3 frequencies.
-    pub fn carrier_phase(&self) -> &[f64; 3] {
-        &self.0.L
-    }
-
-    /// Pseudorange measurements (meters) for up to 3 frequencies.
-    pub fn pseudorange(&self) -> &[f64; 3] {
-        &self.0.P
-    }
-
-    /// Doppler measurements (Hz) for up to 3 frequencies.
-    pub fn doppler(&self) -> &[f32; 3] {
-        &self.0.D
-    }
-
-    /// Signal-to-noise ratio (dB-Hz) for up to 3 frequencies.
-    pub fn snr(&self) -> &[f32; 3] {
-        &self.0.SNR
-    }
-
-    /// Signal code identifiers for up to 3 frequencies.
-    pub fn code(&self) -> &[u8; 3] {
-        &self.0.code
-    }
-
-    /// Loss-of-lock indicators for up to 3 frequencies.
-    pub fn lli(&self) -> &[u8; 3] {
-        &self.0.LLI
-    }
-}
 
 /// RTCM3 message decoder.
 ///
