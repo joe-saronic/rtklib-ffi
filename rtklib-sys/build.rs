@@ -70,10 +70,39 @@ fn main() {
         build.file("rtklib/src/tides.c");
     }
 
-    #[cfg(feature = "raw")]
+    #[cfg(feature = "receiver")]
     {
         build.file("rtklib/src/rcvraw.c");
+        // The rcv/ files use #include "rtklib.h" with a relative path.
+        build.include("rtklib/src");
     }
+
+    #[cfg(feature = "binex")]
+    build.file("rtklib/src/rcv/binex.c");
+    #[cfg(feature = "comnav")]
+    build.file("rtklib/src/rcv/comnav.c");
+    #[cfg(feature = "crescent")]
+    build.file("rtklib/src/rcv/crescent.c");
+    #[cfg(feature = "javad")]
+    build.file("rtklib/src/rcv/javad.c");
+    #[cfg(feature = "novatel")]
+    build.file("rtklib/src/rcv/novatel.c");
+    #[cfg(feature = "nvs")]
+    build.file("rtklib/src/rcv/nvs.c");
+    #[cfg(feature = "rt17")]
+    build.file("rtklib/src/rcv/rt17.c");
+    #[cfg(feature = "septentrio")]
+    build.file("rtklib/src/rcv/septentrio.c");
+    #[cfg(feature = "skytraq")]
+    build.file("rtklib/src/rcv/skytraq.c");
+    #[cfg(feature = "swiftnav")]
+    build.file("rtklib/src/rcv/swiftnav.c");
+    #[cfg(feature = "tersus")]
+    build.file("rtklib/src/rcv/tersus.c");
+    #[cfg(feature = "ublox")]
+    build.file("rtklib/src/rcv/ublox.c");
+    #[cfg(feature = "unicore")]
+    build.file("rtklib/src/rcv/unicore.c");
 
     // RTCM files are needed by both ppk and rtcm features.
     // PPK uses them for SSR corrections.
