@@ -4,15 +4,28 @@
 //!
 //! Enable functionality via Cargo features:
 //!
-//! - **`ppk`**: Post-processed kinematic positioning via [`postpos()`].
-//! - **`rtcm`**: RTCM3 message decoding via [`RtcmDecoder`].
+//! - **`binex`**: BINEX receiver decoding.
+//! - **`comnav`**: ComNav receiver decoding.
 //! - **`conv`**: File format conversion.
-//! - **`raw`**: Raw receiver data decoding.
-//! - **`net`**: Network streaming.
+//! - **`crescent`**: Hemisphere Crescent receiver decoding.
 //! - **`gis`**: GIS data support.
-//! - **`tle`**: TLE satellite tracking.
 //! - **`hifitime`**: Conversions between [`GpsTime`] and [`hifitime::Epoch`].
+//! - **`javad`**: Javad/Topcon receiver decoding.
+//! - **`net`**: Network streaming.
+//! - **`novatel`**: NovAtel OEM receiver decoding.
+//! - **`nvs`**: NVS receiver decoding.
+//! - **`ppk`**: Post-processed kinematic positioning via [`postpos()`].
+//! - **`receiver`**: Core receiver decoding infrastructure; enabled automatically by any receiver-specific feature.
+//! - **`rt17`**: Trimble RT17 receiver decoding.
+//! - **`rtcm`**: RTCM3 message decoding via [`RtcmDecoder`].
+//! - **`septentrio`**: Septentrio SBF receiver decoding.
+//! - **`skytraq`**: SkyTraq receiver decoding.
 //! - **`strum`**: Adds [`std::fmt::Display`] support for enums via the optional [`strum`](https://docs.rs/strum) dependency.
+//! - **`swiftnav`**: Swift Navigation receiver decoding.
+//! - **`tersus`**: Tersus receiver decoding.
+//! - **`tle`**: TLE satellite tracking.
+//! - **`ublox`**: u-blox UBX receiver decoding.
+//! - **`unicore`**: Unicore receiver decoding.
 
 #[cfg(feature = "hifitime")]
 use hifitime::Epoch;
