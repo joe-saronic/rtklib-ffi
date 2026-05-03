@@ -126,6 +126,7 @@ fn main() {
     #[cfg(unix)]
     println!("cargo:rustc-link-lib=m");
 
+    build.opt_level_str(&env::var("OPT_LEVEL").unwrap());
     build.warnings(false);
     build.compile("rtklib");
 
