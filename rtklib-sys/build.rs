@@ -79,8 +79,10 @@ fn main() {
 
     #[cfg(feature = "binex")]
     build.file("rtklib/src/rcv/binex.c");
-    #[cfg(feature = "comnav")]
-    build.file("rtklib/src/rcv/comnav.c");
+    // comnav.c uses satwavelen() and lam_carr[] which were removed from
+    // rtkcmn.c upstream. It will not compile until updated to use sat2freq().
+    // #[cfg(feature = "comnav")]
+    // build.file("rtklib/src/rcv/comnav.c");
     #[cfg(feature = "crescent")]
     build.file("rtklib/src/rcv/crescent.c");
     #[cfg(feature = "javad")]
@@ -97,8 +99,10 @@ fn main() {
     build.file("rtklib/src/rcv/skytraq.c");
     #[cfg(feature = "swiftnav")]
     build.file("rtklib/src/rcv/swiftnav.c");
-    #[cfg(feature = "tersus")]
-    build.file("rtklib/src/rcv/tersus.c");
+    // tersus.c uses satwavelen() and lam_carr[] which were removed from
+    // rtkcmn.c upstream. It will not compile until updated to use sat2freq().
+    // #[cfg(feature = "tersus")]
+    // build.file("rtklib/src/rcv/tersus.c");
     #[cfg(feature = "ublox")]
     build.file("rtklib/src/rcv/ublox.c");
     #[cfg(feature = "unicore")]

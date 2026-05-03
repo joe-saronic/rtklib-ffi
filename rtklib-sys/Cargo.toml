@@ -14,7 +14,7 @@ links = "rtklib-ffi"
 
 [features]
 binex = ["receiver"]
-comnav = ["receiver"]
+# comnav = ["receiver"]  # does not compile; see build.rs
 conv = []
 crescent = ["receiver"]
 gis = []
@@ -29,7 +29,7 @@ rtcm = []
 septentrio = ["receiver"]
 skytraq = ["receiver"]
 swiftnav = ["receiver"]
-tersus = ["receiver"]
+# tersus = ["receiver"]  # does not compile; see build.rs
 tle = []
 ublox = ["receiver"]
 unicore = ["receiver"]
