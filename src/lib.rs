@@ -50,6 +50,11 @@ pub use meas::*;
 #[error("failed to initialize decoder")]
 pub struct DecoderInitError;
 
+#[cfg(feature = "receiver")]
+pub mod receiver;
+#[cfg(feature = "receiver")]
+pub use receiver::*;
+
 #[cfg(feature = "rtcm")]
 pub mod rtcm;
 #[cfg(feature = "rtcm")]
