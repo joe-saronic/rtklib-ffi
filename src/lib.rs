@@ -5,7 +5,7 @@
 //! Enable functionality via Cargo features:
 //!
 //! - **`binex`**: BINEX receiver decoding.
-//! - **`comnav`**: ComNav receiver decoding.
+//! - ~~**`comnav`**: ComNav receiver decoding.~~
 //! - **`conv`**: File format conversion.
 //! - **`crescent`**: Hemisphere Crescent receiver decoding.
 //! - **`gis`**: GIS data support.
@@ -22,7 +22,7 @@
 //! - **`skytraq`**: SkyTraq receiver decoding.
 //! - **`strum`**: Adds [`std::fmt::Display`] support for enums via the optional [`strum`](https://docs.rs/strum) dependency.
 //! - **`swiftnav`**: Swift Navigation receiver decoding.
-//! - **`tersus`**: Tersus receiver decoding.
+//! - ~~**`tersus`**: Tersus receiver decoding.~~
 //! - **`tle`**: TLE satellite tracking.
 //! - **`ublox`**: u-blox UBX receiver decoding.
 //! - **`unicore`**: Unicore receiver decoding.

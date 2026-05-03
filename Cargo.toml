@@ -19,7 +19,7 @@ members = ["rtklib-sys"]
 
 [features]
 binex = ["receiver", "rtklib-sys/binex"]
-comnav = ["receiver", "rtklib-sys/comnav"]
+# comnav = ["receiver", "rtklib-sys/comnav"]  # does not compile; see rtklib-sys/build.rs
 conv = ["rtklib-sys/conv"]
 crescent = ["receiver", "rtklib-sys/crescent"]
 gis = ["rtklib-sys/gis"]
@@ -36,7 +36,7 @@ septentrio = ["receiver", "rtklib-sys/septentrio"]
 skytraq = ["receiver", "rtklib-sys/skytraq"]
 strum = ["dep:strum"]
 swiftnav = ["receiver", "rtklib-sys/swiftnav"]
-tersus = ["receiver", "rtklib-sys/tersus"]
+# tersus = ["receiver", "rtklib-sys/tersus"]  # does not compile; see rtklib-sys/build.rs
 tle = ["rtklib-sys/tle"]
 ublox = ["receiver", "rtklib-sys/ublox"]
 unicore = ["receiver", "rtklib-sys/unicore"]
