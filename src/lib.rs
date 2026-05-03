@@ -45,6 +45,11 @@ pub use solution::*;
 pub mod meas;
 pub use meas::*;
 
+/// Error returned when a decoder fails to initialize.
+#[derive(Debug, thiserror::Error)]
+#[error("failed to initialize decoder")]
+pub struct DecoderInitError;
+
 #[cfg(feature = "rtcm")]
 pub mod rtcm;
 #[cfg(feature = "rtcm")]
