@@ -7,28 +7,15 @@ in `rtklib-ffi` cover a subset - see the coverage tables below for current statu
 
 | Feature | Description |
 |---------|-------------|
-| `binex` | BINEX binary exchange format decoding |
-| ~~`comnav`~~ | ~~ComNav receiver decoding~~ |
-| `conv` | RINEX and other file format conversion |
-| `crescent` | Hemisphere Crescent receiver decoding |
+| `conv` | RINEX and other file format conversion; implies `receivers` because `convrnx` references `init_raw` unconditionally at link time |
 | `gis` | GIS data support |
 | `hifitime` | Conversions between `GpsTime` and `hifitime::Epoch` |
-| `javad` | Javad/Topcon receiver decoding |
 | `net` | Network streaming |
-| `novatel` | NovAtel OEM receiver decoding |
-| `nvs` | NVS receiver decoding |
 | `ppk` | Post-processed kinematic positioning via `postpos()` and solution I/O |
-| `receiver` | Core receiver decoding infrastructure; enabled automatically by any receiver-specific feature, but can also be activated directly |
-| `rt17` | Trimble RT17 receiver decoding |
+| `receivers` | All supported hardware receiver decoders: BINEX, Hemisphere Crescent, Javad/Topcon, NovAtel OEM, NVS, Septentrio SBF, SkyTraq, Swift Navigation SBP, Trimble RT17, u-blox UBX, and Unicore |
 | `rtcm` | RTCM3 message decoding |
-| `septentrio` | Septentrio SBF receiver decoding |
-| `skytraq` | SkyTraq receiver decoding |
 | `strum` | `Display` for enums via the `strum` crate |
-| `swiftnav` | Swift Navigation receiver decoding |
-| ~~`tersus`~~ | ~~Tersus receiver decoding~~ |
 | `tle` | TLE satellite tracking |
-| `ublox` | u-blox UBX receiver decoding |
-| `unicore` | Unicore receiver decoding |
 
 ## Quick Start
 
@@ -336,7 +323,11 @@ Called internally by `rtcm.c`. Not intended for direct use.
 
 ---
 
-### Raw Receiver Decoding - `receiver` feature and features for each receiver type
+### Raw Receiver Decoding - `receivers` feature
+
+All receiver format files are compiled together. `rcvraw.c` calls init, free,
+and input functions for every supported format unconditionally, so all format
+files must be present in the same link unit.
 
 **`rcvraw.c`**
 
@@ -353,60 +344,60 @@ Generic frame decoders used by all receiver-specific decoders.
 - [ ] `decode_gal_fnav` / `decode_gal_inav`: decode Galileo F/NAV and I/NAV messages
 - [ ] `decode_irn_nav`: decode NavIC navigation message
 
-**`rcv/binex.c`**: `binex` feature
+**`rcv/binex.c`**
 
 - [ ] `input_bnx` / `input_bnxf`: BINEX decoder
 
-~~**`rcv/comnav.c`**: `comnav` feature~~
+~~**`rcv/comnav.c`**~~ - uses APIs removed upstream; excluded until updated
 
 - ~~[ ] `input_cnav` / `input_cnavf`: ComNav decoder~~
 
-**`rcv/crescent.c`**: `crescent` feature
+**`rcv/crescent.c`**
 
 - [ ] `input_cres` / `input_cresf`: Hemisphere Crescent decoder
 
-**`rcv/javad.c`**: `javad` feature
+**`rcv/javad.c`**
 
 - [ ] `input_javad` / `input_javadf`: Javad/Topcon decoder
 
-**`rcv/novatel.c`**: `novatel` feature
+**`rcv/novatel.c`**
 
 - [ ] `input_oem4` / `input_oem4f`: NovAtel OEM4/6/7 decoder
 - [ ] `input_oem3` / `input_oem3f`: NovAtel OEM3 decoder
 
-**`rcv/nvs.c`**: `nvs` feature
+**`rcv/nvs.c`**
 
 - [ ] `input_nvs` / `input_nvsf`: NVS decoder
 - [ ] `gen_nvs`: generate NVS command
 
-**`rcv/rt17.c`**: `rt17` feature
+**`rcv/rt17.c`**
 
 - [ ] `input_rt17` / `input_rt17f`: Trimble RT17 decoder
 
-**`rcv/septentrio.c`**: `septentrio` feature
+**`rcv/septentrio.c`**
 
 - [x] `init_sbf` / `free_sbf`: initialize/free Septentrio SBF struct
 - [x] `input_sbf` / `input_sbff`: Septentrio SBF decoder
 
-**`rcv/skytraq.c`**: `skytraq` feature
+**`rcv/skytraq.c`**
 
 - [ ] `input_stq` / `input_stqf`: SkyTraq decoder
 - [ ] `gen_stq`: generate SkyTraq command
 
-**`rcv/swiftnav.c`**: `swiftnav` feature
+**`rcv/swiftnav.c`**
 
 - [ ] `input_sbp` / `input_sbpf` / `input_sbpjsonf`: Swift Navigation SBP decoder
 
-~~**`rcv/tersus.c`**: `tersus` feature~~
+~~**`rcv/tersus.c`**~~ - uses APIs removed upstream; excluded until updated
 
 - ~~[ ] `input_tersus` / `input_tersusf`: Tersus decoder~~
 
-**`rcv/ublox.c`**: `ublox` feature
+**`rcv/ublox.c`**
 
 - [ ] `input_ubx` / `input_ubxf`: u-blox UBX decoder
 - [ ] `gen_ubx`: generate u-blox command
 
-**`rcv/unicore.c`**: `unicore` feature
+**`rcv/unicore.c`**
 
 - [ ] `input_unicore` / `input_unicoref`: Unicore decoder
 

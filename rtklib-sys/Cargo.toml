@@ -13,26 +13,13 @@ categories = [ "api-bindings", "rtklib", "external-ffi-bindings" ]
 links = "rtklib-ffi"
 
 [features]
-binex = ["receiver"]
-# comnav = ["receiver"]  # does not compile; see build.rs
-conv = []
-crescent = ["receiver"]
+conv = ["receivers"]
 gis = []
-javad = ["receiver"]
 net = []
-novatel = ["receiver"]
-nvs = ["receiver"]
 ppk = []
-receiver = []
-rt17 = ["receiver"]
+receivers = []
 rtcm = []
-septentrio = ["receiver"]
-skytraq = ["receiver"]
-swiftnav = ["receiver"]
-# tersus = ["receiver"]  # does not compile; see build.rs
 tle = []
-ublox = ["receiver"]
-unicore = ["receiver"]
 
 [build-dependencies]
 bindgen = "0.70.1"

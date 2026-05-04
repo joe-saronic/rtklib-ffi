@@ -4,28 +4,20 @@
 //!
 //! Enable functionality via Cargo features:
 //!
-//! - **`binex`**: BINEX receiver decoding.
-//! - ~~**`comnav`**: ComNav receiver decoding.~~
-//! - **`conv`**: File format conversion.
-//! - **`crescent`**: Hemisphere Crescent receiver decoding.
+//! - **`conv`**: File format conversion. Implies `receivers` - `convrnx` calls
+//!   `init_raw` at link time regardless of input format, which requires all
+//!   receiver format files to be present.
 //! - **`gis`**: GIS data support.
 //! - **`hifitime`**: Conversions between [`GpsTime`] and [`hifitime::Epoch`].
-//! - **`javad`**: Javad/Topcon receiver decoding.
 //! - **`net`**: Network streaming.
-//! - **`novatel`**: NovAtel OEM receiver decoding.
-//! - **`nvs`**: NVS receiver decoding.
 //! - **`ppk`**: Post-processed kinematic positioning via [`postpos()`].
-//! - **`receiver`**: Core receiver decoding infrastructure; enabled automatically by any receiver-specific feature.
-//! - **`rt17`**: Trimble RT17 receiver decoding.
+//! - **`receivers`**: All supported hardware receiver decoders: BINEX, Hemisphere
+//!   Crescent, Javad/Topcon, NovAtel OEM, NVS, Septentrio SBF, SkyTraq, Swift
+//!   Navigation SBP, Trimble RT17, u-blox UBX, and Unicore. ComNav and Tersus are
+//!   not included; their source files use APIs removed in the current upstream.
 //! - **`rtcm`**: RTCM3 message decoding via [`RtcmDecoder`].
-//! - **`septentrio`**: Septentrio SBF receiver decoding.
-//! - **`skytraq`**: SkyTraq receiver decoding.
 //! - **`strum`**: Adds [`std::fmt::Display`] support for enums via the optional [`strum`](https://docs.rs/strum) dependency.
-//! - **`swiftnav`**: Swift Navigation receiver decoding.
-//! - ~~**`tersus`**: Tersus receiver decoding.~~
 //! - **`tle`**: TLE satellite tracking.
-//! - **`ublox`**: u-blox UBX receiver decoding.
-//! - **`unicore`**: Unicore receiver decoding.
 
 #[cfg(feature = "hifitime")]
 use hifitime::Epoch;
@@ -50,10 +42,15 @@ pub use meas::*;
 #[error("failed to initialize decoder")]
 pub struct DecoderInitError;
 
-#[cfg(feature = "receiver")]
+#[cfg(feature = "receivers")]
 pub mod receiver;
-#[cfg(feature = "receiver")]
+#[cfg(feature = "receivers")]
 pub use receiver::*;
+
+#[cfg(feature = "conv")]
+pub mod conv;
+#[cfg(feature = "conv")]
+pub use conv::*;
 
 #[cfg(feature = "rtcm")]
 pub mod rtcm;

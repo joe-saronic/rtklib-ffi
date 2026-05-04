@@ -11,9 +11,7 @@ use std::{
     slice::from_raw_parts,
 };
 
-#[cfg(feature = "septentrio")]
 pub mod septentrio;
-#[cfg(feature = "septentrio")]
 pub use septentrio::*;
 
 /// Shared raw receiver state wrapping the RTKLIB `raw_t` struct.
