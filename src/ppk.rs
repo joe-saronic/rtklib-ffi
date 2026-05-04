@@ -56,6 +56,17 @@ pub enum PosMode {
     PppFixed = ffi::PMODE_PPP_FIXED,
 }
 
+/// Time format for solution output.
+#[cfg_attr(feature = "strum", derive(strum::Display))]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
+#[repr(u32)]
+pub enum TimeFormat {
+    /// GPS seconds of week: `sssss.s`.
+    GpsSeconds = 0,
+    /// Calendar date and time: `yyyy/mm/dd hh:mm:ss.s`.
+    Calendar = 1,
+}
+
 /// Solution output format.
 #[cfg_attr(feature = "strum", derive(strum::Display))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
@@ -193,8 +204,8 @@ impl PrcOpt {
         opt
     }
 
-    /// Set positioning mode.
-    pub fn set_mode(&mut self, mode: PosMode) -> &mut Self {
+    /// Positioning mode.
+    pub fn with_mode(mut self, mode: PosMode) -> Self {
         self.0.mode = mode as i32;
         self
     }
@@ -205,8 +216,8 @@ impl PrcOpt {
         PosMode::try_from(self.0.mode as u32).unwrap()
     }
 
-    /// Set solution type.
-    pub fn set_solution_type(&mut self, sol: SolutionType) -> &mut Self {
+    /// Solution type.
+    pub fn with_solution_type(mut self, sol: SolutionType) -> Self {
         self.0.soltype = sol as i32;
         self
     }
@@ -217,8 +228,8 @@ impl PrcOpt {
         SolutionType::try_from(self.0.soltype as u32).unwrap()
     }
 
-    /// Set enabled navigation systems.
-    pub fn set_navsys(&mut self, sys: NavSys) -> &mut Self {
+    /// Enabled navigation systems.
+    pub fn with_navsys(mut self, sys: NavSys) -> Self {
         self.0.navsys = sys.bits() as i32;
         self
     }
@@ -228,8 +239,8 @@ impl PrcOpt {
         NavSys::from_bits_truncate(self.0.navsys as u32)
     }
 
-    /// Set number of frequencies. 1=L1, 2=L1+L2, 3=L1+L2+L5.
-    pub fn set_frequencies(&mut self, nf: i32) -> &mut Self {
+    /// Number of frequencies. 1=L1, 2=L1+L2, 3=L1+L2+L5.
+    pub fn with_frequencies(mut self, nf: i32) -> Self {
         self.0.nf = nf;
         self
     }
@@ -239,8 +250,8 @@ impl PrcOpt {
         self.0.nf
     }
 
-    /// Set elevation mask angle in degrees.
-    pub fn set_elevation_mask(&mut self, deg: f64) -> &mut Self {
+    /// Elevation mask angle in degrees.
+    pub fn with_elevation_mask(mut self, deg: f64) -> Self {
         self.0.elmin = deg.to_radians();
         self
     }
@@ -250,8 +261,8 @@ impl PrcOpt {
         self.0.elmin
     }
 
-    /// Set ambiguity resolution mode.
-    pub fn set_ar_mode(&mut self, mode: ArMode) -> &mut Self {
+    /// Ambiguity resolution mode.
+    pub fn with_ar_mode(mut self, mode: ArMode) -> Self {
         self.0.modear = mode as i32;
         self
     }
@@ -262,8 +273,8 @@ impl PrcOpt {
         ArMode::try_from(self.0.modear as u32).unwrap()
     }
 
-    /// Set ionosphere correction option.
-    pub fn set_ionosphere(&mut self, opt: IonoOpt) -> &mut Self {
+    /// Ionosphere correction option.
+    pub fn with_ionosphere(mut self, opt: IonoOpt) -> Self {
         self.0.ionoopt = opt as i32;
         self
     }
@@ -274,20 +285,20 @@ impl PrcOpt {
         IonoOpt::try_from(self.0.ionoopt as u32).unwrap()
     }
 
-    /// Set base station position in ECEF coordinates (meters).
+    /// Base station position in ECEF coordinates (meters).
     ///
     /// Equivalent to the `-r` flag in `rnx2rtkp`.
-    pub fn set_base_position_ecef(&mut self, x: f64, y: f64, z: f64) -> &mut Self {
+    pub fn with_base_position_ecef(mut self, x: f64, y: f64, z: f64) -> Self {
         self.0.refpos = ffi::POSOPT_POS_XYZ as i32;
         self.0.rb = [x, y, z];
         self
     }
 
-    /// Set base station position in geodetic coordinates
+    /// Base station position in geodetic coordinates
     /// (latitude and longitude in degrees, height in meters).
     ///
     /// Equivalent to the `-l` flag in `rnx2rtkp`.
-    pub fn set_base_position_llh(&mut self, lat_deg: f64, lon_deg: f64, height: f64) -> &mut Self {
+    pub fn with_base_position_llh(mut self, lat_deg: f64, lon_deg: f64, height: f64) -> Self {
         self.0.refpos = ffi::POSOPT_POS_LLH as i32;
         let pos = [lat_deg.to_radians(), lon_deg.to_radians(), height];
         unsafe { ffi::pos2ecef(pos.as_ptr(), self.0.rb.as_mut_ptr()) };
@@ -299,8 +310,8 @@ impl PrcOpt {
         self.0.rb
     }
 
-    /// Set troposphere correction option.
-    pub fn set_troposphere(&mut self, opt: TropOpt) -> &mut Self {
+    /// Troposphere correction option.
+    pub fn with_troposphere(mut self, opt: TropOpt) -> Self {
         self.0.tropopt = opt as i32;
         self
     }
@@ -326,8 +337,8 @@ impl Default for SolOpt {
 }
 
 impl SolOpt {
-    /// Set solution output format.
-    pub fn set_format(&mut self, format: SolFormat) -> &mut Self {
+    /// Solution output format.
+    pub fn with_format(mut self, format: SolFormat) -> Self {
         self.0.posf = format as i32;
         self
     }
@@ -338,19 +349,19 @@ impl SolOpt {
         SolFormat::try_from(self.0.posf as u32).unwrap()
     }
 
-    /// Set time format. 0=sssss.s, 1=yyyy/mm/dd hh:mm:ss.s.
-    pub fn set_time_format(&mut self, timef: i32) -> &mut Self {
-        self.0.timef = timef;
+    /// Time format.
+    pub fn with_time_format(mut self, timef: TimeFormat) -> Self {
+        self.0.timef = timef as i32;
         self
     }
 
     /// Get time format.
-    pub fn time_format(&self) -> i32 {
-        self.0.timef
+    pub fn time_format(&self) -> TimeFormat {
+        TimeFormat::try_from(self.0.timef as u32).unwrap()
     }
 
-    /// Set number of decimal places for time output.
-    pub fn set_time_decimals(&mut self, timeu: i32) -> &mut Self {
+    /// Number of decimal places for time output.
+    pub fn with_time_decimals(mut self, timeu: i32) -> Self {
         self.0.timeu = timeu;
         self
     }
@@ -360,8 +371,8 @@ impl SolOpt {
         self.0.timeu
     }
 
-    /// Enable or disable output header.
-    pub fn set_output_header(&mut self, enable: bool) -> &mut Self {
+    /// Output header.
+    pub fn with_output_header(mut self, enable: bool) -> Self {
         self.0.outhead = enable as i32;
         self
     }
