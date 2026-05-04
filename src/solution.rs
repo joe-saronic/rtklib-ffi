@@ -4,11 +4,10 @@
 //! [`read_solt`] wraps `readsolt`, and [`write_sol`] wraps `outsolheads` and
 //! `outsols` from `solution.c`.
 
-use crate::{ppk::SolOpt, GpsTime, Llh, SolStatus};
+use crate::{ppk::SolOpt, util::CStringArray, GpsTime, Llh, SolStatus};
 use num_enum::TryFromPrimitive;
 use rtklib_sys::rtklib as ffi;
 use std::{
-    ffi::CString,
     fs::File,
     io::{Error as IoError, Write},
 };
@@ -195,20 +194,12 @@ fn validate_coord_types(buf: SolBuf) -> Result<SolBuf, SolError> {
     Ok(buf)
 }
 
-fn build_cstring_ptrs(paths: &[&str]) -> Result<(Vec<CString>, Vec<*const i8>), SolError> {
-    let cstrings = paths
-        .iter()
-        .map(|p| CString::new(*p).map_err(|_| SolError::NulByte(p.to_string())))
-        .collect::<Result<Vec<_>, _>>()?;
-    let ptrs = cstrings.iter().map(|s| s.as_ptr()).collect();
-    Ok((cstrings, ptrs))
-}
-
 /// Read solution records from one or more `.pos` files.
 pub fn read_sol(paths: &[&str]) -> Result<SolBuf, SolError> {
-    let (_cstrings, mut ptrs) = build_cstring_ptrs(paths)?;
+    let mut arr = CStringArray::try_new(paths)
+        .map_err(|e| SolError::NulByte(e.to_string_lossy().into_owned()))?;
     let mut buf = unsafe { std::mem::zeroed::<ffi::solbuf_t>() };
-    let ret = unsafe { ffi::readsol(ptrs.as_mut_ptr(), ptrs.len() as i32, &mut buf) };
+    let ret = unsafe { ffi::readsol(arr.as_mut_ptr(), arr.len() as i32, &mut buf) };
     if ret == 0 {
         return Err(SolError::ReadFailed);
     }
@@ -224,12 +215,13 @@ pub fn read_solt(
     qflag: i32,
     mean: bool,
 ) -> Result<SolBuf, SolError> {
-    let (_cstrings, mut ptrs) = build_cstring_ptrs(paths)?;
+    let mut arr = CStringArray::try_new(paths)
+        .map_err(|e| SolError::NulByte(e.to_string_lossy().into_owned()))?;
     let mut buf = unsafe { std::mem::zeroed::<ffi::solbuf_t>() };
     let ret = unsafe {
         ffi::readsolt(
-            ptrs.as_mut_ptr(),
-            ptrs.len() as i32,
+            arr.as_mut_ptr(),
+            arr.len() as i32,
             ts.0,
             te.0,
             tint,

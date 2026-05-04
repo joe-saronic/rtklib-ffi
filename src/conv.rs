@@ -8,11 +8,13 @@
 //! convrnx(StreamFmt::Rinex, &mut opt, "input.rnx", &ofiles).unwrap();
 //! ```
 
-use crate::{GpsTime, NavSys};
+use crate::{
+    util::{copy_osstr, CStringArray},
+    GpsTime, NavSys,
+};
 use num_enum::TryFromPrimitive;
 use rtklib_sys::rtklib as ffi;
-use std::ffi::{CString, OsStr, OsString};
-use std::os::unix::ffi::OsStrExt;
+use std::ffi::{OsStr, OsString};
 use thiserror::Error;
 
 /// Input stream format for [`convrnx`].
@@ -131,15 +133,6 @@ pub enum RinexVersion {
     V304 = 304,
     /// RINEX 3.05.
     V305 = 305,
-}
-
-fn copy_osstr<const N: usize>(dst: &mut [i8; N], src: &OsStr) {
-    let src = src.as_bytes();
-    let n = src.len().min(N - 1);
-    unsafe {
-        std::ptr::copy_nonoverlapping(src.as_ptr() as *const i8, dst.as_mut_ptr(), n);
-        dst[n] = 0;
-    }
 }
 
 /// RINEX conversion options.
@@ -446,23 +439,15 @@ pub fn convrnx(
     file: impl AsRef<OsStr>,
     ofile: &RnxOutputFiles,
 ) -> Result<(), ConvrnxError> {
-    let file = file.as_ref();
-    let file_c =
-        CString::new(file.as_bytes()).map_err(|_| ConvrnxError::NulByte(file.to_owned()))?;
-
-    let mut cstrings = ofile
-        .as_slice()
-        .iter()
-        .map(|p| CString::new(p.as_bytes()).map_err(|_| ConvrnxError::NulByte(p.clone())))
-        .collect::<Result<Vec<_>, _>>()?;
-    let mut ptrs: Vec<*mut i8> = cstrings.iter().map(|s| s.as_ptr() as *mut i8).collect();
+    let file_arr = CStringArray::try_single(file.as_ref()).map_err(|e| ConvrnxError::NulByte(e.to_owned()))?;
+    let mut ofile_arr = CStringArray::try_new(ofile.as_slice()).map_err(|e| ConvrnxError::NulByte(e.to_owned()))?;
 
     let ret = unsafe {
         ffi::convrnx(
             format as i32,
             &mut opt.0,
-            file_c.as_ptr(),
-            ptrs.as_mut_ptr(),
+            file_arr.first(),
+            ofile_arr.as_mut_ptr() as *mut *mut i8,
         )
     };
 

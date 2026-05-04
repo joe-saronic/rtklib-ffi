@@ -14,7 +14,7 @@
 //! ).unwrap();
 //! ```
 
-use crate::NavSys;
+use crate::{util::CStringArray, NavSys};
 use num_enum::TryFromPrimitive;
 use rtklib_sys::rtklib as ffi;
 use std::ffi::CString;
@@ -427,25 +427,21 @@ pub fn postpos(
         });
     }
 
-    let mut cstrings = Vec::with_capacity(total);
-    let mut paths = vec![rover_obs, base_obs];
-    paths.extend_from_slice(nav_files);
-
-    for p in &paths {
-        cstrings.push(CString::new(*p).map_err(|_| PostposError::NulByte(p.to_string()))?);
-    }
+    let mut all_inputs = vec![rover_obs, base_obs];
+    all_inputs.extend_from_slice(nav_files);
 
     // C signature is `const char **infile` — the strings are const but the
     // pointer to the array is not, so bindgen generates `*mut *const c_char`.
     // The function does not actually mutate the array.
-    let mut ptrs: Vec<*const i8> = cstrings.iter().map(|s| s.as_ptr()).collect();
-    let outfile = CString::new(output).map_err(|_| PostposError::NulByte(output.to_string()))?;
+    let mut infile_arr = CStringArray::try_new(&all_inputs)
+        .map_err(|e| PostposError::NulByte(e.to_string_lossy().into_owned()))?;
+    let out_arr = CStringArray::try_new(&[output])
+        .map_err(|e| PostposError::NulByte(e.to_string_lossy().into_owned()))?;
+    let rov = CString::new("").unwrap();
+    let base = CString::new("").unwrap();
 
     let ts = ffi::gtime_t { time: 0, sec: 0.0 };
     let te = ffi::gtime_t { time: 0, sec: 0.0 };
-
-    let rov = CString::new("").unwrap();
-    let base = CString::new("").unwrap();
 
     let ret = unsafe {
         ffi::postpos(
@@ -456,9 +452,9 @@ pub fn postpos(
             popt.as_ffi(),
             sopt.as_ffi(),
             fopt.as_ffi(),
-            ptrs.as_mut_ptr(),
-            ptrs.len() as i32,
-            outfile.as_ptr(),
+            infile_arr.as_mut_ptr(),
+            infile_arr.len() as i32,
+            out_arr.first(),
             rov.as_ptr(),
             base.as_ptr(),
         )

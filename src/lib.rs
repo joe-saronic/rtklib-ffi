@@ -37,6 +37,8 @@ pub use solution::*;
 pub mod meas;
 pub use meas::*;
 
+mod util;
+
 /// Error returned when a decoder fails to initialize.
 #[derive(Debug, thiserror::Error)]
 #[error("failed to initialize decoder")]
