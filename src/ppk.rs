@@ -17,7 +17,7 @@
 use crate::{util::CStringArray, NavSys};
 use num_enum::TryFromPrimitive;
 use rtklib_sys::rtklib as ffi;
-use std::ffi::CString;
+use std::ffi::{CString, OsStr, OsString};
 
 /// Positioning mode.
 #[cfg_attr(feature = "strum", derive(strum::Display))]
@@ -395,8 +395,8 @@ impl FilOpt {
 #[derive(Debug, thiserror::Error)]
 pub enum PostposError {
     /// A file path contained an interior null byte.
-    #[error("path contains null byte: {0}")]
-    NulByte(String),
+    #[error("path contains null byte: {0:?}")]
+    NulByte(OsString),
     /// Too many input files for RTKLIB's fixed-size array.
     #[error("{count} > {max} input files")]
     TooManyInputFiles { count: usize, max: usize },
@@ -405,14 +405,20 @@ pub enum PostposError {
     ProcessingFailed(i32),
 }
 
+impl From<&OsStr> for PostposError {
+    fn from(s: &OsStr) -> Self {
+        Self::NulByte(s.to_owned())
+    }
+}
+
 /// Run PPK post-processing on RINEX observation and navigation files.
 ///
 /// Returns `Ok(())` on success. Results are written to the output file.
-pub fn postpos(
-    rover_obs: &str,
-    base_obs: &str,
-    nav_files: &[&str],
-    output: &str,
+pub fn postpos<T: AsRef<OsStr>>(
+    rover_obs: impl AsRef<OsStr>,
+    base_obs: impl AsRef<OsStr>,
+    nav_files: &[T],
+    output: impl AsRef<OsStr>,
     popt: &PrcOpt,
     sopt: &SolOpt,
     fopt: &FilOpt,
@@ -427,16 +433,14 @@ pub fn postpos(
         });
     }
 
-    let mut all_inputs = vec![rover_obs, base_obs];
-    all_inputs.extend_from_slice(nav_files);
+    let mut all_inputs: Vec<&OsStr> = vec![rover_obs.as_ref(), base_obs.as_ref()];
+    all_inputs.extend(nav_files.iter().map(|f| f.as_ref()));
 
     // C signature is `const char **infile` — the strings are const but the
     // pointer to the array is not, so bindgen generates `*mut *const c_char`.
     // The function does not actually mutate the array.
-    let mut infile_arr = CStringArray::try_new(&all_inputs)
-        .map_err(|e| PostposError::NulByte(e.to_string_lossy().into_owned()))?;
-    let out_arr = CStringArray::try_new(&[output])
-        .map_err(|e| PostposError::NulByte(e.to_string_lossy().into_owned()))?;
+    let mut infile_arr = CStringArray::try_new(&all_inputs)?;
+    let out_arr = CStringArray::try_new(&[output.as_ref()])?;
     let rov = CString::new("").unwrap();
     let base = CString::new("").unwrap();
 

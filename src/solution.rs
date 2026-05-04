@@ -8,6 +8,7 @@ use crate::{ppk::SolOpt, util::CStringArray, GpsTime, Llh, SolStatus};
 use num_enum::TryFromPrimitive;
 use rtklib_sys::rtklib as ffi;
 use std::{
+    ffi::{OsStr, OsString},
     fs::File,
     io::{Error as IoError, Write},
 };
@@ -28,8 +29,8 @@ pub enum CoordType {
 #[derive(Debug, Error)]
 pub enum SolError {
     /// A file path contained an interior null byte.
-    #[error("path contains null byte: {0}")]
-    NulByte(String),
+    #[error("path contains null byte: {0:?}")]
+    NulByte(OsString),
     /// Reading the solution file failed or returned no data.
     #[error("read failed")]
     ReadFailed,
@@ -194,10 +195,15 @@ fn validate_coord_types(buf: SolBuf) -> Result<SolBuf, SolError> {
     Ok(buf)
 }
 
+impl From<&OsStr> for SolError {
+    fn from(s: &OsStr) -> Self {
+        Self::NulByte(s.to_owned())
+    }
+}
+
 /// Read solution records from one or more `.pos` files.
-pub fn read_sol(paths: &[&str]) -> Result<SolBuf, SolError> {
-    let mut arr = CStringArray::try_new(paths)
-        .map_err(|e| SolError::NulByte(e.to_string_lossy().into_owned()))?;
+pub fn read_sol<T: AsRef<OsStr>>(paths: &[T]) -> Result<SolBuf, SolError> {
+    let mut arr = CStringArray::try_new(paths)?;
     let mut buf = unsafe { std::mem::zeroed::<ffi::solbuf_t>() };
     let ret = unsafe { ffi::readsol(arr.as_mut_ptr(), arr.len() as i32, &mut buf) };
     if ret == 0 {
@@ -207,16 +213,15 @@ pub fn read_sol(paths: &[&str]) -> Result<SolBuf, SolError> {
 }
 
 /// Read solution records within a time window from one or more `.pos` files.
-pub fn read_solt(
-    paths: &[&str],
+pub fn read_solt<T: AsRef<OsStr>>(
+    paths: &[T],
     ts: GpsTime,
     te: GpsTime,
     tint: f64,
     qflag: i32,
     mean: bool,
 ) -> Result<SolBuf, SolError> {
-    let mut arr = CStringArray::try_new(paths)
-        .map_err(|e| SolError::NulByte(e.to_string_lossy().into_owned()))?;
+    let mut arr = CStringArray::try_new(paths)?;
     let mut buf = unsafe { std::mem::zeroed::<ffi::solbuf_t>() };
     let ret = unsafe {
         ffi::readsolt(
@@ -237,8 +242,8 @@ pub fn read_solt(
 }
 
 /// Write solution records to a file using the given output options.
-pub fn write_sol(path: &str, buf: &SolBuf, opt: &SolOpt) -> Result<(), SolError> {
-    let mut file = File::create(path)?;
+pub fn write_sol(path: impl AsRef<OsStr>, buf: &SolBuf, opt: &SolOpt) -> Result<(), SolError> {
+    let mut file = File::create(path.as_ref())?;
     let mut scratch = [0u8; 513];
     let n = unsafe { ffi::outsolheads(scratch.as_mut_ptr(), opt.as_ffi()) };
     file.write_all(&scratch[..n as usize])?;
