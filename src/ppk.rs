@@ -21,117 +21,145 @@ use std::ffi::CString;
 
 /// Positioning mode.
 #[cfg_attr(feature = "strum", derive(strum::Display))]
-#[cfg_attr(feature = "strum", strum(serialize_all = "SCREAMING_SNAKE_CASE"))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
 #[repr(u32)]
 pub enum PosMode {
     /// Single point positioning. From PMODE_SINGLE.
+    #[cfg_attr(feature = "strum", strum(to_string = "PMODE_SINGLE"))]
     Single = ffi::PMODE_SINGLE,
     /// Differential GPS / DGNSS. From PMODE_DGPS.
+    #[cfg_attr(feature = "strum", strum(to_string = "PMODE_DGPS"))]
     Dgps = ffi::PMODE_DGPS,
     /// Kinematic positioning. From PMODE_KINEMA.
+    #[cfg_attr(feature = "strum", strum(to_string = "PMODE_KINEMA"))]
     Kinematic = ffi::PMODE_KINEMA,
     /// Static positioning. From PMODE_STATIC.
+    #[cfg_attr(feature = "strum", strum(to_string = "PMODE_STATIC"))]
     Static = ffi::PMODE_STATIC,
     /// Static positioning starting from a known position. From PMODE_STATIC_START.
+    #[cfg_attr(feature = "strum", strum(to_string = "PMODE_STATIC_START"))]
     StaticStart = ffi::PMODE_STATIC_START,
     /// Moving base station. From PMODE_MOVEB.
+    #[cfg_attr(feature = "strum", strum(to_string = "PMODE_MOVEB"))]
     MovingBase = ffi::PMODE_MOVEB,
     /// Fixed position. From PMODE_FIXED.
+    #[cfg_attr(feature = "strum", strum(to_string = "PMODE_FIXED"))]
     Fixed = ffi::PMODE_FIXED,
     /// Precise Point Positioning, kinematic. From PMODE_PPP_KINEMA.
+    #[cfg_attr(feature = "strum", strum(to_string = "PMODE_PPP_KINEMA"))]
     PppKinematic = ffi::PMODE_PPP_KINEMA,
     /// Precise Point Positioning, static. From PMODE_PPP_STATIC.
+    #[cfg_attr(feature = "strum", strum(to_string = "PMODE_PPP_STATIC"))]
     PppStatic = ffi::PMODE_PPP_STATIC,
     /// Precise Point Positioning, fixed. From PMODE_PPP_FIXED.
+    #[cfg_attr(feature = "strum", strum(to_string = "PMODE_PPP_FIXED"))]
     PppFixed = ffi::PMODE_PPP_FIXED,
 }
 
 /// Solution output format.
 #[cfg_attr(feature = "strum", derive(strum::Display))]
-#[cfg_attr(feature = "strum", strum(serialize_all = "SCREAMING_SNAKE_CASE"))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
 #[repr(u32)]
 pub enum SolFormat {
     /// Latitude, longitude, and height. From SOLF_LLH.
+    #[cfg_attr(feature = "strum", strum(to_string = "SOLF_LLH"))]
     Llh = ffi::SOLF_LLH,
     /// X, Y, Z in ECEF coordinates. From SOLF_XYZ.
+    #[cfg_attr(feature = "strum", strum(to_string = "SOLF_XYZ"))]
     Xyz = ffi::SOLF_XYZ,
     /// East, north, up baseline components. From SOLF_ENU.
+    #[cfg_attr(feature = "strum", strum(to_string = "SOLF_ENU"))]
     Enu = ffi::SOLF_ENU,
     /// NMEA-0183 sentences. From SOLF_NMEA.
+    #[cfg_attr(feature = "strum", strum(to_string = "SOLF_NMEA"))]
     Nmea = ffi::SOLF_NMEA,
 }
 
 /// Ionosphere correction option.
 #[cfg_attr(feature = "strum", derive(strum::Display))]
-#[cfg_attr(feature = "strum", strum(serialize_all = "SCREAMING_SNAKE_CASE"))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
 #[repr(u32)]
 pub enum IonoOpt {
     /// Ionosphere correction disabled. From IONOOPT_OFF.
+    #[cfg_attr(feature = "strum", strum(to_string = "IONOOPT_OFF"))]
     Off = ffi::IONOOPT_OFF,
     /// Klobuchar broadcast model. From IONOOPT_BRDC.
+    #[cfg_attr(feature = "strum", strum(to_string = "IONOOPT_BRDC"))]
     Broadcast = ffi::IONOOPT_BRDC,
     /// SBAS ionosphere model. From IONOOPT_SBAS.
+    #[cfg_attr(feature = "strum", strum(to_string = "IONOOPT_SBAS"))]
     Sbas = ffi::IONOOPT_SBAS,
     /// Iono-free linear combination of L1/L2 or L1/L5. From IONOOPT_IFLC.
+    #[cfg_attr(feature = "strum", strum(to_string = "IONOOPT_IFLC"))]
     IonFreeLc = ffi::IONOOPT_IFLC,
     /// Ionosphere delay estimation. From IONOOPT_EST.
+    #[cfg_attr(feature = "strum", strum(to_string = "IONOOPT_EST"))]
     Estimation = ffi::IONOOPT_EST,
     /// IONEX TEC grid model. From IONOOPT_TEC.
+    #[cfg_attr(feature = "strum", strum(to_string = "IONOOPT_TEC"))]
     Tec = ffi::IONOOPT_TEC,
     /// QZSS broadcast ionosphere model. From IONOOPT_QZS.
+    #[cfg_attr(feature = "strum", strum(to_string = "IONOOPT_QZS"))]
     Qzs = ffi::IONOOPT_QZS,
 }
 
 /// Troposphere correction option.
 #[cfg_attr(feature = "strum", derive(strum::Display))]
-#[cfg_attr(feature = "strum", strum(serialize_all = "SCREAMING_SNAKE_CASE"))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
 #[repr(u32)]
 pub enum TropOpt {
     /// Troposphere correction disabled. From TROPOPT_OFF.
+    #[cfg_attr(feature = "strum", strum(to_string = "TROPOPT_OFF"))]
     Off = ffi::TROPOPT_OFF,
     /// Saastamoinen model. From TROPOPT_SAAS.
+    #[cfg_attr(feature = "strum", strum(to_string = "TROPOPT_SAAS"))]
     Saastamoinen = ffi::TROPOPT_SAAS,
     /// SBAS troposphere model. From TROPOPT_SBAS.
+    #[cfg_attr(feature = "strum", strum(to_string = "TROPOPT_SBAS"))]
     Sbas = ffi::TROPOPT_SBAS,
     /// Zenith total delay estimation. From TROPOPT_EST.
+    #[cfg_attr(feature = "strum", strum(to_string = "TROPOPT_EST"))]
     Estimation = ffi::TROPOPT_EST,
     /// Zenith total delay plus horizontal gradient estimation. From TROPOPT_ESTG.
+    #[cfg_attr(feature = "strum", strum(to_string = "TROPOPT_ESTG"))]
     EstimationGrad = ffi::TROPOPT_ESTG,
 }
 
 /// Ambiguity resolution mode.
 #[cfg_attr(feature = "strum", derive(strum::Display))]
-#[cfg_attr(feature = "strum", strum(serialize_all = "SCREAMING_SNAKE_CASE"))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
 #[repr(u32)]
 pub enum ArMode {
     /// Ambiguity resolution disabled.
+    #[cfg_attr(feature = "strum", strum(to_string = "ARMODE_OFF"))]
     Off = ffi::ARMODE_OFF,
     /// Continuous ambiguity resolution.
+    #[cfg_attr(feature = "strum", strum(to_string = "ARMODE_CONT"))]
     Continuous = ffi::ARMODE_CONT,
     /// Instantaneous ambiguity resolution.
+    #[cfg_attr(feature = "strum", strum(to_string = "ARMODE_INST"))]
     Instantaneous = ffi::ARMODE_INST,
     /// Fix-and-hold ambiguity resolution.
+    #[cfg_attr(feature = "strum", strum(to_string = "ARMODE_FIXHOLD"))]
     FixAndHold = ffi::ARMODE_FIXHOLD,
 }
 
 /// Filter solution type.
 #[cfg_attr(feature = "strum", derive(strum::Display))]
-#[cfg_attr(feature = "strum", strum(serialize_all = "SCREAMING_SNAKE_CASE"))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
 #[repr(u32)]
 pub enum SolutionType {
     /// Forward filter only. From SOLTYPE_FORWARD.
+    #[cfg_attr(feature = "strum", strum(to_string = "SOLTYPE_FORWARD"))]
     Forward = ffi::SOLTYPE_FORWARD,
     /// Backward filter only. From SOLTYPE_BACKWARD.
+    #[cfg_attr(feature = "strum", strum(to_string = "SOLTYPE_BACKWARD"))]
     Backward = ffi::SOLTYPE_BACKWARD,
     /// Combined forward+backward. From SOLTYPE_COMBINED.
+    #[cfg_attr(feature = "strum", strum(to_string = "SOLTYPE_COMBINED"))]
     Combined = ffi::SOLTYPE_COMBINED,
     /// Combined forward+backward without phase reset. From SOLTYPE_COMBINED_NORESET.
+    #[cfg_attr(feature = "strum", strum(to_string = "SOLTYPE_COMBINED_NORESET"))]
     CombinedNoReset = ffi::SOLTYPE_COMBINED_NORESET,
 }
 

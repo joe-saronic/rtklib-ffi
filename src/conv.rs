@@ -17,45 +17,62 @@ use thiserror::Error;
 
 /// Input stream format for [`convrnx`].
 #[cfg_attr(feature = "strum", derive(strum::Display))]
-#[cfg_attr(feature = "strum", strum(serialize_all = "SCREAMING_SNAKE_CASE"))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
 #[repr(u32)]
 pub enum StreamFmt {
     /// RTCM 2.
+    #[cfg_attr(feature = "strum", strum(to_string = "STRFMT_RTCM2"))]
     Rtcm2 = ffi::STRFMT_RTCM2,
     /// RTCM 3.
+    #[cfg_attr(feature = "strum", strum(to_string = "STRFMT_RTCM3"))]
     Rtcm3 = ffi::STRFMT_RTCM3,
     /// NovAtel OEM4/6/7.
+    #[cfg_attr(feature = "strum", strum(to_string = "STRFMT_OEM4"))]
     Oem4 = ffi::STRFMT_OEM4,
     /// u-blox UBX.
+    #[cfg_attr(feature = "strum", strum(to_string = "STRFMT_UBX"))]
     Ubx = ffi::STRFMT_UBX,
     /// Swift Navigation SBP.
+    #[cfg_attr(feature = "strum", strum(to_string = "STRFMT_SBP"))]
     Sbp = ffi::STRFMT_SBP,
     /// Hemisphere Crescent.
+    #[cfg_attr(feature = "strum", strum(to_string = "STRFMT_CRES"))]
     Crescent = ffi::STRFMT_CRES,
     /// SkyTraq.
+    #[cfg_attr(feature = "strum", strum(to_string = "STRFMT_STQ"))]
     SkyTraq = ffi::STRFMT_STQ,
     /// Javad/Topcon GRIL/GREIS.
+    #[cfg_attr(feature = "strum", strum(to_string = "STRFMT_JAVAD"))]
     Javad = ffi::STRFMT_JAVAD,
     /// NVS NVC08C.
+    #[cfg_attr(feature = "strum", strum(to_string = "STRFMT_NVS"))]
     Nvs = ffi::STRFMT_NVS,
     /// BINEX.
+    #[cfg_attr(feature = "strum", strum(to_string = "STRFMT_BINEX"))]
     Binex = ffi::STRFMT_BINEX,
     /// Trimble RT17.
+    #[cfg_attr(feature = "strum", strum(to_string = "STRFMT_RT17"))]
     Rt17 = ffi::STRFMT_RT17,
     /// Septentrio SBF.
+    #[cfg_attr(feature = "strum", strum(to_string = "STRFMT_SEPT"))]
     Sbf = ffi::STRFMT_SEPT,
     /// Unicore.
+    #[cfg_attr(feature = "strum", strum(to_string = "STRFMT_UNICORE"))]
     Unicore = ffi::STRFMT_UNICORE,
     /// RINEX observation or navigation file.
+    #[cfg_attr(feature = "strum", strum(to_string = "STRFMT_RINEX"))]
     Rinex = ffi::STRFMT_RINEX,
     /// SP3 precise ephemeris.
+    #[cfg_attr(feature = "strum", strum(to_string = "STRFMT_SP3"))]
     Sp3 = ffi::STRFMT_SP3,
     /// RINEX clock file.
+    #[cfg_attr(feature = "strum", strum(to_string = "STRFMT_RNXCLK"))]
     RinexClk = ffi::STRFMT_RNXCLK,
     /// SBAS log.
+    #[cfg_attr(feature = "strum", strum(to_string = "STRFMT_SBAS"))]
     Sbas = ffi::STRFMT_SBAS,
     /// NMEA 0183.
+    #[cfg_attr(feature = "strum", strum(to_string = "STRFMT_NMEA"))]
     Nmea = ffi::STRFMT_NMEA,
 }
 
