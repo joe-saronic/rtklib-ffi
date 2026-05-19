@@ -85,6 +85,7 @@ fn main() {
     {
         build.file("rtklib/src/rcvraw.c");
         build.include("rtklib/src");
+        build.file("rtklib/src/rcv/adnav.c");
         build.file("rtklib/src/rcv/binex.c");
         build.file("rtklib/src/rcv/crescent.c");
         build.file("rtklib/src/rcv/javad.c");
