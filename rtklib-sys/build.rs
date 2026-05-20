@@ -54,16 +54,21 @@ fn main() {
 
     // These files are needed by both ppk and conv. convrnx.c calls pntpos for
     // auto-position estimation; pntpos.c calls into preceph.c and ionex.c;
-    // rinex.c and sbas.c are referenced unconditionally by convrnx.c.
+    // rinex.c is referenced unconditionally by convrnx.c.
     #[cfg(any(feature = "ppk", feature = "conv"))]
     {
         build.file("rtklib/src/rinex.c");
         build.file("rtklib/src/ephemeris.c");
-        build.file("rtklib/src/sbas.c");
         build.file("rtklib/src/pntpos.c");
         build.file("rtklib/src/preceph.c");
         build.file("rtklib/src/ionex.c");
     }
+
+    // sbas.c provides igpband1/igpband2, referenced unconditionally by
+    // septentrio.c's SBAS packet handlers, and is also used by ppk/conv
+    // for SBAS corrections.
+    #[cfg(any(feature = "receivers", feature = "ppk", feature = "conv"))]
+    build.file("rtklib/src/sbas.c");
 
     #[cfg(feature = "ppk")]
     {
