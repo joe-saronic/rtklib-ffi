@@ -12,7 +12,7 @@ in `rtklib-ffi` cover a subset - see the coverage tables below for current statu
 | `hifitime` | Conversions between `GpsTime` and `hifitime::Epoch` |
 | `net` | Network streaming |
 | `ppk` | Post-processed kinematic positioning via `postpos()` and solution I/O |
-| `receivers` | All supported hardware receiver decoders: BINEX, Hemisphere Crescent, Javad/Topcon, NovAtel OEM, NVS, Septentrio SBF, SkyTraq, Swift Navigation SBP, Trimble RT17, u-blox UBX, and Unicore |
+| `receivers` | All supported hardware receiver decoders: Advanced Navigation ANPP, BINEX, Hemisphere Crescent, Javad/Topcon, NovAtel OEM, NVS, Septentrio SBF, SkyTraq, Swift Navigation SBP, Trimble RT17, u-blox UBX, and Unicore |
 | `rtcm` | RTCM3 message decoding |
 | `strum` | `Display` for enums via the `strum` crate |
 | `tle` | TLE satellite tracking |
@@ -21,7 +21,7 @@ in `rtklib-ffi` cover a subset - see the coverage tables below for current statu
 
 ```toml
 [dependencies]
-rtklib-ffi = { version = "0.3", features = ["ppk"] }
+rtklib-ffi = { version = "0.4", features = ["ppk"] }
 ```
 
 ```rust
@@ -343,6 +343,11 @@ Generic frame decoders used by all receiver-specific decoders.
 - [ ] `decode_bds_d1` / `decode_bds_d2`: decode BeiDou D1/D2 navigation messages
 - [ ] `decode_gal_fnav` / `decode_gal_inav`: decode Galileo F/NAV and I/NAV messages
 - [ ] `decode_irn_nav`: decode NavIC navigation message
+
+**`rcv/adnav.c`**
+
+- [x] `init_anpp` / `free_anpp`: initialize/free Advanced Navigation ANPP struct
+- [x] `input_anpp` / `input_anppf`: Advanced Navigation ANPP decoder
 
 **`rcv/binex.c`**
 
