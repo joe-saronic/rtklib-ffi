@@ -18,9 +18,8 @@ fn decode_sbf_all_blocks() {
         let Some(status) = decoder.decode(byte) else {
             continue;
         };
-        match status {
-            DecodeStatus::Ephemeris => eph_count += 1,
-            _ => {}
+        if matches!(status, DecodeStatus::Ephemeris) {
+            eph_count += 1;
         }
     }
 
