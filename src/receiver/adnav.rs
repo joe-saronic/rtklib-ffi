@@ -45,7 +45,7 @@ impl AnppDecoder {
     /// Returns `Err` if RTKLIB cannot allocate internal buffers.
     pub fn try_new(receiver_num: u8) -> Result<Self, DecoderInitError> {
         let mut decoder = Self(RawReceiver::init(ffi::STRFMT_ANPP as i32)?);
-        copy_osstr(&mut decoder.0.0.opt, &format!("-RCVR{receiver_num}"));
+        copy_osstr(&mut decoder.0.0.opt, format!("-RCVR{receiver_num}"));
         Ok(decoder)
     }
 

@@ -1,10 +1,11 @@
-use std::{
-    ffi::{CString, OsStr},
-    os::unix::ffi::OsStrExt,
-};
+#[cfg(any(feature = "conv", feature = "ppk"))]
+use std::ffi::CString;
+#[cfg(any(feature = "conv", feature = "ppk", feature = "receivers"))]
+use std::{ffi::OsStr, os::unix::ffi::OsStrExt};
 
 /// Copy an `AsRef<OsStr>` into a fixed-size null-terminated `[i8; N]` C buffer.
 /// Truncates silently if `src` is longer than `N - 1` bytes.
+#[cfg(any(feature = "conv", feature = "receivers"))]
 pub(crate) fn copy_osstr<const N: usize>(dst: &mut [i8; N], src: impl AsRef<OsStr>) {
     let src = src.as_ref().as_bytes();
     let n = src.len().min(N - 1);
@@ -18,11 +19,13 @@ pub(crate) fn copy_osstr<const N: usize>(dst: &mut [i8; N], src: impl AsRef<OsSt
 ///
 /// `as_ptr` holds pointers into each `CString`'s owned string buffer. Moving this
 /// struct retains the validity of the pointers to the heap-allocated strings.
+#[cfg(any(feature = "conv", feature = "ppk"))]
 pub(crate) struct CStringArray {
     _strings: Vec<CString>,
     ptrs: Vec<*const i8>,
 }
 
+#[cfg(any(feature = "conv", feature = "ppk"))]
 impl CStringArray {
     /// Build from a slice of paths. Returns the offending path if one contains a NUL byte.
     pub(crate) fn try_new<T: AsRef<OsStr>>(paths: &[T]) -> Result<Self, &OsStr> {
@@ -38,6 +41,7 @@ impl CStringArray {
     }
 
     /// Build from a single path. Returns the offending path if it contains a NUL byte.
+    #[cfg(feature = "conv")]
     pub(crate) fn try_single(path: &OsStr) -> Result<Self, &OsStr> {
         let string = CString::new(path.as_bytes()).map_err(|_| path)?;
         Ok(Self {
@@ -57,6 +61,7 @@ impl CStringArray {
     }
 
     /// Number of strings in the array.
+    #[cfg(feature = "ppk")]
     pub(crate) fn len(&self) -> usize {
         self.ptrs.len()
     }
