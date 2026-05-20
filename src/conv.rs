@@ -61,6 +61,9 @@ pub enum StreamFmt {
     /// Unicore.
     #[cfg_attr(feature = "strum", strum(to_string = "STRFMT_UNICORE"))]
     Unicore = ffi::STRFMT_UNICORE,
+    /// Advanced Navigation Packet Protocol.
+    #[cfg_attr(feature = "strum", strum(to_string = "STRFMT_ANPP"))]
+    Anpp = ffi::STRFMT_ANPP,
     /// RINEX observation or navigation file.
     #[cfg_attr(feature = "strum", strum(to_string = "STRFMT_RINEX"))]
     Rinex = ffi::STRFMT_RINEX,
@@ -237,6 +240,35 @@ impl RnxOpt {
     pub fn with_time_window(mut self, start: GpsTime, end: GpsTime) -> Self {
         self.0.ts = start.0;
         self.0.te = end.0;
+        self
+    }
+
+    /// Set receiver-specific decoder options.
+    ///
+    /// Forwarded into the decoder's `raw->opt` string at session start. Format
+    /// is a space-separated list of dash-prefixed flags whose meaning depends
+    /// on the receiver format.
+    ///
+    /// Notable examples:
+    ///
+    /// - **ANPP**: `-RCVR<n>` selects the antenna by zero-based receiver number
+    ///   (default 0).
+    /// - **SBF (Septentrio)**: `-AUX1` or `-AUX2` selects an auxiliary antenna
+    ///   (default is the main antenna); `-NO_MEAS2` skips type-2 sub-blocks.
+    /// - **BINEX**: `-EPHALL` keeps every ephemeris (default discards
+    ///   duplicates by IODE); `-GALFNAV` / `-GALINAV` pick the Galileo nav
+    ///   message variant.
+    /// - **NVS**: `-tadj=<seconds>` adjusts time tags; `-EPHALL` as above.
+    /// - **Crescent (Hemisphere)**: `-TTCORR`, `-ENAGLO`, `-EPHALL`.
+    /// - **Tersus**: signal-priority overrides like `-GL1P`, `-GL2X`, `-RL2C`,
+    ///   `-EL1B`, plus `-EPHALL`.
+    /// - **Swift Navigation SBP**: `-OBSALL` retains observations flagged as
+    ///   non-final.
+    ///
+    /// Strings longer than the underlying 256-byte buffer (including the NUL
+    /// terminator) are truncated.
+    pub fn with_rcvopt(mut self, opts: &str) -> Self {
+        copy_osstr(&mut self.0.rcvopt, opts);
         self
     }
 

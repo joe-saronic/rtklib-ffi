@@ -3,10 +3,10 @@ use std::{
     os::unix::ffi::OsStrExt,
 };
 
-/// Copy an `OsStr` into a fixed-size null-terminated `[i8; N]` C buffer.
+/// Copy an `AsRef<OsStr>` into a fixed-size null-terminated `[i8; N]` C buffer.
 /// Truncates silently if `src` is longer than `N - 1` bytes.
-pub(crate) fn copy_osstr<const N: usize>(dst: &mut [i8; N], src: &OsStr) {
-    let src = src.as_bytes();
+pub(crate) fn copy_osstr<const N: usize>(dst: &mut [i8; N], src: impl AsRef<OsStr>) {
+    let src = src.as_ref().as_bytes();
     let n = src.len().min(N - 1);
     unsafe {
         std::ptr::copy_nonoverlapping(src.as_ptr() as *const i8, dst.as_mut_ptr(), n);
