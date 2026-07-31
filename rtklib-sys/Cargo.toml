@@ -1,6 +1,6 @@
 [package]
 name = "rtklib-sys"
-version = "0.3.0"
+version = "0.4.0"
 rust-version = "1.82.0"
 edition = "2018"
 authors = ["Kevin Webb", "Joseph Fox-Rabinovitz"]
